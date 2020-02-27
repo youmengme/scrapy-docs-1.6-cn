@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>下载和处理文件与图像 &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Deploying Spiders" href="deploy.html" />
+    <link rel="prev" title="Debugging memory leaks" href="leaks.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">下载和处理文件与图像</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#files-pipeline">使用文件管道（Files Pipeline）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#images-pipeline">使用图像管道（Images Pipeline）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#media-pipeline">启用媒体管道（Media Pipeline）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">支持的存储</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">文件系统存储</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Amazon S3 存储</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#google-cloud">Google Cloud 存储</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">用法示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">附加功能</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">文件到期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#topics-images-thumbnails">图像的缩略图生成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">过滤小图像</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">允许重定向</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scrapy.pipelines.files">扩展媒体管道</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">定制图像管道的例子</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>下载和处理文件与图像</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/media-pipeline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="topics-media-pipeline">
+<span id="id1"></span><h1>下载和处理文件与图像<a class="headerlink" href="#topics-media-pipeline" title="Permalink to this headline">¶</a></h1>
+<p>Scrapy提供可重复使用的 <a class="reference internal" href="item-pipeline.html"><span class="doc">item pipelines</span></a> 用于下载附加到特定项目的文件（例如，当您刮取产品并且还想在本地下载其图像时）。这些管道共享一些功能和结构（我们将它们称为媒体管道），但通常您将使用文件管道或图像管道。</p>
+<p>两个管道都实现了这些功能:</p>
+<ul class="simple">
+<li><p>避免重新下载最近下载的媒体</p></li>
+<li><p>指定存储介质的位置（文件系统目录，Amazon S3存储空间，Google云端存储存储空间）</p></li>
+</ul>
+<p>图像管道具有一些用于处理图像的额外功能:</p>
+<ul class="simple">
+<li><p>将所有下载的图像转换为通用格式（JPG）和模式（RGB）</p></li>
+<li><p>缩略图生成</p></li>
+<li><p>检查图像宽度/高度以确保它们符合最小约束</p></li>
+</ul>
+<p>管道还保留当前正在计划下载的那些媒体URL的内部队列，并将那些到达包含相同媒体的响应连接到该队列。这样可以避免在多个项目共享时多次下载相同的媒体。</p>
+<div class="section" id="files-pipeline">
+<h2>使用文件管道（Files Pipeline）<a class="headerlink" href="#files-pipeline" title="Permalink to this headline">¶</a></h2>
+<p>使用时的典型工作流程F <code class="xref py py-class docutils literal notranslate"><span class="pre">FilesPipeline</span></code> 如下:</p>
+<ol class="arabic simple">
+<li><p>在Spider中，您抓取一个项目并将所需的URL放入一个 <code class="docutils literal notranslate"><span class="pre">file_urls</span></code> 字段中。</p></li>
+<li><p>该项目从Spider返回并转到item pipeline.</p></li>
+<li><p>当项目到达时 <code class="xref py py-class docutils literal notranslate"><span class="pre">FilesPipeline</span></code> 时, <code class="docutils literal notranslate"><span class="pre">file_urls</span></code> 使用标准Scrapy调度程序和下载程序（这意味着重新使用调度程序和下载程序中间件）计划下载字段中的URL ，但具有更高优先级，在其他页面被删除之前处理它们。该项目在该特定管道阶段保持“锁定”，直到文件完成下载（或由于某种原因失败）。</p></li>
+<li><p>下载文件时，将用结果填充另一个字段 (<code class="docutils literal notranslate"><span class="pre">files</span></code>) 此字段将包含包含有关下载文件的信息的dict列表，例如下载的路径、原始的已擦除URL (从 <code class="docutils literal notranslate"><span class="pre">file_urls</span></code> 字段获取) 和文件校验, and the file checksum.
+The files in the list of the <code class="docutils literal notranslate"><span class="pre">files</span></code> f字段列表中的文件将保留原始 <code class="docutils literal notranslate"><span class="pre">file_urls</span></code> 字段的相同顺序。如果某些文件下载失败，将记录错误，该文件将不会出现在该 <code class="docutils literal notranslate"><span class="pre">files</span></code> 字段中.</p></li>
+</ol>
+</div>
+<div class="section" id="images-pipeline">
+<h2>使用图像管道（Images Pipeline）<a class="headerlink" href="#images-pipeline" title="Permalink to this headline">¶</a></h2>
+<p>使用 <a class="reference internal" href="#scrapy.pipelines.images.ImagesPipeline" title="scrapy.pipelines.images.ImagesPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImagesPipeline</span></code></a> 很像使用 <code class="xref py py-class docutils literal notranslate"><span class="pre">FilesPipeline</span></code>,
+除了使用的默认字段名称不同：您使用 <code class="docutils literal notranslate"><span class="pre">image_urls</span></code> 目的图像URL，它将填充一个 <code class="docutils literal notranslate"><span class="pre">images</span></code> 字段以获取有关下载图像的信息。</p>
+<p>将 <a class="reference internal" href="#scrapy.pipelines.images.ImagesPipeline" title="scrapy.pipelines.images.ImagesPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImagesPipeline</span></code></a> 用于图像文件的优点是，您可以配置一些额外的功能，如生成缩略图和根据图像大小过滤图像。</p>
+<p>Images Pipeline 使用 <a class="reference external" href="https://github.com/python-pillow/Pillow">Pillow</a> 进行缩略图并将图像标准化为JPEG / RGB格式，因此您需要安装此库才能使用它。
+<a class="reference external" href="http://www.pythonware.com/products/pil/">Python Imaging Library</a> (PIL) 在大多数情况下也应该可以工作，但是已知它会在某些设置中引起麻烦，因此我们建议使用 <a class="reference external" href="https://github.com/python-pillow/Pillow">Pillow</a> 而不是
+PIL.</p>
+</div>
+<div class="section" id="media-pipeline">
+<span id="topics-media-pipeline-enabling"></span><h2>启用媒体管道（Media Pipeline）<a class="headerlink" href="#media-pipeline" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="std:setting-IMAGES_STORE"></span><p id="std:setting-FILES_STORE">要启用媒体管道，必须先将其添加到项目
+<a class="reference internal" href="settings.html#std:setting-ITEM_PIPELINES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ITEM_PIPELINES</span></code></a> 设置中</p>
+<p>对于图像管道，请使用:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scrapy.pipelines.images.ImagesPipeline&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For Files Pipeline, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ITEM_PIPELINES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;scrapy.pipelines.files.FilesPipeline&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>您也可以同时使用“文件”和“图像管道”。</p>
+</div>
+<p>然后，将目标存储设置配置为将用于存储下载的图像的有效值。否则，即使您将管道包含 <a class="reference internal" href="settings.html#std:setting-ITEM_PIPELINES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">ITEM_PIPELINES</span></code></a> 设置中，管道也将保持禁用状态。</p>
+<p>对于“文件管道”，请设置 <a class="reference internal" href="#std:setting-FILES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_STORE</span></code></a> 以下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FILES_STORE</span> <span class="o">=</span> <span class="s1">&#39;/path/to/valid/dir&#39;</span>
+</pre></div>
+</div>
+<p>对于图像管道，请设置 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 以下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_STORE</span> <span class="o">=</span> <span class="s1">&#39;/path/to/valid/dir&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>支持的存储<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>文件系统是目前唯一官方支持的存储，但也支持在 <a class="reference external" href="https://aws.amazon.com/s3/">Amazon S3</a> 和`Google Cloud Storage`_.</p>
+<div class="section" id="id3">
+<h3>文件系统存储<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>这些文件使用其URL 的 <a class="reference external" href="https://en.wikipedia.org/wiki/SHA_hash_functions">SHA1 hash</a> 存储为文件名.</p>
+<p>例如，以下图片网址:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">image</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>其 <cite>SHA1 hash</cite> 是:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">3</span><span class="n">afec3b4765f8f0a07b78f98c07b83f013567a0a</span>
+</pre></div>
+</div>
+<p>将被下载并存储在以下文件中:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">IMAGES_STORE</span><span class="o">&gt;/</span><span class="n">full</span><span class="o">/</span><span class="mi">3</span><span class="n">afec3b4765f8f0a07b78f98c07b83f013567a0a</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;IMAGES_STORE&gt;</span></code> 是定义在 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 设置里的文件夹.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> 是用来区分图片和缩略图（如果使用的话）的一个子文件夹。详情参见 <a class="reference internal" href="#topics-images-thumbnails"><span class="std std-ref">图像的缩略图生成</span></a>.</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>Amazon S3 存储<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="std:setting-FILES_STORE_S3_ACL"></span><p id="std:setting-IMAGES_STORE_S3_ACL"><a class="reference internal" href="#std:setting-FILES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_STORE</span></code></a> 和 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 表示 Amazon S3
+存储. Scrapy会自动将文件上传到存储空间。</p>
+<p>例如，这是有效的 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_STORE</span> <span class="o">=</span> <span class="s1">&#39;s3://bucket/images&#39;</span>
+</pre></div>
+</div>
+<p>您可以修改用于存储文件的访问控制列表（ACL）策略，该策略由 <a class="reference internal" href="#std:setting-FILES_STORE_S3_ACL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_STORE_S3_ACL</span></code></a> 和
+<a class="reference internal" href="#std:setting-IMAGES_STORE_S3_ACL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE_S3_ACL</span></code></a> 设置定义。默认情况下，ACL设置为
+<code class="docutils literal notranslate"><span class="pre">private</span></code>. 要使文件公开可用，请使用以下 <code class="docutils literal notranslate"><span class="pre">public-read</span></code>
+策略:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_STORE_S3_ACL</span> <span class="o">=</span> <span class="s1">&#39;public-read&#39;</span>
+</pre></div>
+</div>
+<p>有关更多信息，请参阅Amazon S3开发人员指南中的 <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl">canned ACLs</a> .</p>
+<p>因为Scrapy在内部使用 <code class="docutils literal notranslate"><span class="pre">boto</span></code> / <code class="docutils literal notranslate"><span class="pre">botocore</span></code> ，所以您也可以使用其他类似S3的存储。储存像自托管 <a class="reference external" href="https://github.com/minio/minio">Minio</a> 或 <a class="reference external" href="https://s3.scality.com/">s3.scality</a>. 您需要做的就是在Scrapy设置中设置端点选项:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AWS_ENDPOINT_URL</span> <span class="o">=</span> <span class="s1">&#39;http://minio.example.com:9000&#39;</span>
+</pre></div>
+</div>
+<p>对于自托管，您也可能感觉不需要使用SSL而不是验证SSL连接:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AWS_USE_SSL</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># or True (None by default)</span>
+<span class="n">AWS_VERIFY</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># or True (None by default)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="google-cloud">
+<h3>Google Cloud 存储<a class="headerlink" href="#google-cloud" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="std:setting-GCS_PROJECT_ID"></span><span class="target" id="std:setting-FILES_STORE_GCS_ACL"></span><p id="std:setting-IMAGES_STORE_GCS_ACL"><a class="reference internal" href="#std:setting-FILES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_STORE</span></code></a> 和 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 可以代表Google云端存储分区。
+Scrapy会自动将文件上传到存储空间。（需要 <a class="reference external" href="https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-python">google-cloud-storage</a> )</p>
+<p>例如，这些是有效的 <a class="reference internal" href="#std:setting-IMAGES_STORE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE</span></code></a> 和 <a class="reference internal" href="#std:setting-GCS_PROJECT_ID"><code class="xref std std-setting docutils literal notranslate"><span class="pre">GCS_PROJECT_ID</span></code></a> 设置:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_STORE</span> <span class="o">=</span> <span class="s1">&#39;gs://bucket/images/&#39;</span>
+<span class="n">GCS_PROJECT_ID</span> <span class="o">=</span> <span class="s1">&#39;project_id&#39;</span>
+</pre></div>
+</div>
+<p>有关身份验证的信息，请参阅此 <a class="reference external" href="https://cloud.google.com/docs/authentication/production">文档</a>.</p>
+<p>您可以修改用于存储文件的访问控制列表（ACL）策略，该策略由 <a class="reference internal" href="#std:setting-FILES_STORE_GCS_ACL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_STORE_GCS_ACL</span></code></a> 和
+<a class="reference internal" href="#std:setting-IMAGES_STORE_GCS_ACL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_STORE_GCS_ACL</span></code></a> s设置定义。默认情况下，ACL设置为
+<code class="docutils literal notranslate"><span class="pre">''</span></code> （空字符串），这意味着云存储将桶的默认对象ACL应用于对象。要使文件公开可用，请使用以下 <code class="docutils literal notranslate"><span class="pre">publicRead</span></code>
+策略:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_STORE_GCS_ACL</span> <span class="o">=</span> <span class="s1">&#39;publicRead&#39;</span>
+</pre></div>
+</div>
+<p>For more information, see <a class="reference external" href="https://cloud.google.com/storage/docs/access-control/lists#predefined-acl">Predefined ACLs</a> in the Google Cloud Platform Developer Guide.</p>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>用法示例<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="std:setting-FILES_URLS_FIELD"></span><span class="target" id="std:setting-FILES_RESULT_FIELD"></span><span class="target" id="std:setting-IMAGES_URLS_FIELD"></span><p id="std:setting-IMAGES_RESULT_FIELD">要首先使用媒体管道，请 <a class="reference internal" href="#topics-media-pipeline-enabling"><span class="std std-ref">请启用它</span></a>.</p>
+<p>然后，如果Spider返回带有URL键的dict (<code class="docutils literal notranslate"><span class="pre">file_urls</span></code> 或
+<code class="docutils literal notranslate"><span class="pre">image_urls</span></code>, 分别对于文件或图像管道), 则管道将把结果放在相应的键 (<code class="docutils literal notranslate"><span class="pre">files</span></code> 或 <code class="docutils literal notranslate"><span class="pre">images</span></code>).</p>
+<p>如果您更喜欢使用 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a>, 请使用必要的字段定义自定义项目，例如图像管道的示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MyItem</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">):</span>
+
+    <span class="c1"># ... other item fields ...</span>
+    <span class="n">image_urls</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>如果要为URL键或结果键使用其他字段名称，也可以覆盖它。</p>
+<p>对于文件管道，设置 <a class="reference internal" href="#std:setting-FILES_URLS_FIELD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_URLS_FIELD</span></code></a> 和/或
+<a class="reference internal" href="#std:setting-FILES_RESULT_FIELD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_RESULT_FIELD</span></code></a> 设置</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FILES_URLS_FIELD</span> <span class="o">=</span> <span class="s1">&#39;field_name_for_your_files_urls&#39;</span>
+<span class="n">FILES_RESULT_FIELD</span> <span class="o">=</span> <span class="s1">&#39;field_name_for_your_processed_files&#39;</span>
+</pre></div>
+</div>
+<p>对于图像管道，设置 <a class="reference internal" href="#std:setting-IMAGES_URLS_FIELD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_URLS_FIELD</span></code></a> 和/或
+<a class="reference internal" href="#std:setting-IMAGES_RESULT_FIELD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_RESULT_FIELD</span></code></a> 设置:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_URLS_FIELD</span> <span class="o">=</span> <span class="s1">&#39;field_name_for_your_images_urls&#39;</span>
+<span class="n">IMAGES_RESULT_FIELD</span> <span class="o">=</span> <span class="s1">&#39;field_name_for_your_processed_images&#39;</span>
+</pre></div>
+</div>
+<p>如果您需要更复杂的内容并希望覆盖自定义管道行为，请参阅 <a class="reference internal" href="#topics-media-pipeline-override"><span class="std std-ref">扩展媒体管道</span></a>.</p>
+<p>如果您有多个从ImagePipeline继承的图像管道，并且您希望在不同的管道中具有不同的设置，则可以设置前面带有管道类的大写名称的设置键。例如，如果您的管道名为MyPipeline，并且您想要自定义IMAGES_URLS_FIELD，则定义设置MYPIPELINE_IMAGES_URLS_FIELD并使用您的自定义设置。</p>
+</div>
+<div class="section" id="id8">
+<h2>附加功能<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h3>文件到期<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="std:setting-IMAGES_EXPIRES"></span><p id="std:setting-FILES_EXPIRES">TImage Pipeline避免下载最近下载的文件。要调整此保留延迟，请使用 <a class="reference internal" href="#std:setting-FILES_EXPIRES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">FILES_EXPIRES</span></code></a> 设置（或
+<a class="reference internal" href="#std:setting-IMAGES_EXPIRES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_EXPIRES</span></code></a>, 在图像管道的情况下），该设置指定天数的延迟:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 120 days of delay for files expiration</span>
+<span class="n">FILES_EXPIRES</span> <span class="o">=</span> <span class="mi">120</span>
+
+<span class="c1"># 30 days of delay for images expiration</span>
+<span class="n">IMAGES_EXPIRES</span> <span class="o">=</span> <span class="mi">30</span>
+</pre></div>
+</div>
+<p>两个设置的默认值为90天。</p>
+<p>如果您具有子类FilesPipeline的管道，并且您希望为其设置不同的设置，则可以设置以大写类名称开头的设置键。例如，给定名为MyPipeline的管道类，您可以设置设置键:</p>
+<blockquote>
+<div><p>MYPIPELINE_FILES_EXPIRES = 180</p>
+</div></blockquote>
+<p>和管道类MyPipeline将到期时间设置为180。</p>
+</div>
+<div class="section" id="topics-images-thumbnails">
+<span id="id10"></span><h3>图像的缩略图生成<a class="headerlink" href="#topics-images-thumbnails" title="Permalink to this headline">¶</a></h3>
+<p>图像管道可以自动创建下载图像的缩略图。</p>
+<p id="std:setting-IMAGES_THUMBS">要使用此功能，您必须设置 <a class="reference internal" href="#std:setting-IMAGES_THUMBS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_THUMBS</span></code></a> 为字典，其中键是缩略图名称，值是其尺寸。</p>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_THUMBS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;small&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+    <span class="s1">&#39;big&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="mi">270</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>使用此功能时，图像管道将使用以下格式创建每个指定大小的缩略图:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">IMAGES_STORE</span><span class="o">&gt;/</span><span class="n">thumbs</span><span class="o">/&lt;</span><span class="n">size_name</span><span class="o">&gt;/&lt;</span><span class="n">image_id</span><span class="o">&gt;.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;size_name&gt;</span></code> 是在指定的 <a class="reference internal" href="#std:setting-IMAGES_THUMBS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_THUMBS</span></code></a>
+字典键 (<code class="docutils literal notranslate"><span class="pre">small</span></code>, <code class="docutils literal notranslate"><span class="pre">big</span></code>, 等)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;image_id&gt;</span></code> 是图像网址的 <a class="reference external" href="https://en.wikipedia.org/wiki/SHA_hash_functions">SHA1 hash</a></p></li>
+</ul>
+<p>使用``small`` 和 <code class="docutils literal notranslate"><span class="pre">big</span></code> 缩略图名称存储的图像文件示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">IMAGES_STORE</span><span class="o">&gt;/</span><span class="n">full</span><span class="o">/</span><span class="mi">63</span><span class="n">bbfea82b8880ed33cdb762aa11fab722a90a24</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">&lt;</span><span class="n">IMAGES_STORE</span><span class="o">&gt;/</span><span class="n">thumbs</span><span class="o">/</span><span class="n">small</span><span class="o">/</span><span class="mi">63</span><span class="n">bbfea82b8880ed33cdb762aa11fab722a90a24</span><span class="o">.</span><span class="n">jpg</span>
+<span class="o">&lt;</span><span class="n">IMAGES_STORE</span><span class="o">&gt;/</span><span class="n">thumbs</span><span class="o">/</span><span class="n">big</span><span class="o">/</span><span class="mi">63</span><span class="n">bbfea82b8880ed33cdb762aa11fab722a90a24</span><span class="o">.</span><span class="n">jpg</span>
+</pre></div>
+</div>
+<p>第一个是从网站下载的完整图像。</p>
+</div>
+<div class="section" id="id11">
+<h3>过滤小图像<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="std:setting-IMAGES_MIN_HEIGHT"></span><p id="std:setting-IMAGES_MIN_WIDTH">使用图像管道时，您可以通过在 <a class="reference internal" href="#std:setting-IMAGES_MIN_HEIGHT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_MIN_HEIGHT</span></code></a> 和
+<a class="reference internal" href="#std:setting-IMAGES_MIN_WIDTH"><code class="xref std std-setting docutils literal notranslate"><span class="pre">IMAGES_MIN_WIDTH</span></code></a> 置中指定允许的最小尺寸来删除太小的图像。</p>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGES_MIN_HEIGHT</span> <span class="o">=</span> <span class="mi">110</span>
+<span class="n">IMAGES_MIN_WIDTH</span> <span class="o">=</span> <span class="mi">110</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>大小限制根本不会影响缩略图生成。</p>
+</div>
+<p>可以只设置一个大小约束或两者。设置两者时，仅保存满足两种最小尺寸的图像。对于上面的例子，尺寸（105×105）或（105×200）或（200×105）的图像都将被丢弃，因为至少一个尺寸比约束短。</p>
+<p>默认情况下，没有大小限制，因此处理所有图像。</p>
+</div>
+<div class="section" id="id12">
+<h3>允许重定向<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<p id="std:setting-MEDIA_ALLOW_REDIRECTS">默认情况下，媒体管道会忽略重定向，即HTTP重定向到媒体文件URL请求将意味着媒体下载被视为失败。</p>
+<p>要处理媒体重定向，请将此设置设置为 <code class="docutils literal notranslate"><span class="pre">True</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MEDIA_ALLOW_REDIRECTS</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="module-scrapy.pipelines.files">
+<span id="id13"></span><span id="topics-media-pipeline-override"></span><h2>扩展媒体管道<a class="headerlink" href="#module-scrapy.pipelines.files" title="Permalink to this headline">¶</a></h2>
+<p>请在此处查看可在自定义文件管道中覆盖的方法:</p>
+<dl class="class">
+<dt id="scrapy.pipelines.files.FilesPipeline">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.pipelines.files.</code><code class="sig-name descname">FilesPipeline</code><a class="headerlink" href="#scrapy.pipelines.files.FilesPipeline" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="scrapy.pipelines.files.FilesPipeline.get_media_requests">
+<code class="sig-name descname">get_media_requests</code><span class="sig-paren">(</span><em class="sig-param">item</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.pipelines.files.FilesPipeline.get_media_requests" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>如工作流程所示，管道将获取要从项目下载的图像的URL。为此，您可以覆盖该</dt><dd><p><a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.get_media_requests" title="scrapy.pipelines.files.FilesPipeline.get_media_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_media_requests()</span></code></a> 方法并返回每个文件URL的请求:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_media_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">file_url</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;file_urls&#39;</span><span class="p">]:</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">file_url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这些请求将由管道处理，当它们完成下载后，结果将
+<a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> 作为2元素元组的列表发送到 方法。每个元组将包含以下内容 <code class="docutils literal notranslate"><span class="pre">(success,</span> <span class="pre">file_info_or_error)</span></code> :</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">success</span></code> 是一个布尔值 ，如果图像下载成功，则为``True`` ，如果由于某种原因失败，则为 <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file_info_or_error</span></code> 是包含以下键的dict（如果success为 <code class="docutils literal notranslate"><span class="pre">True</span></code>) 或者如果出现问题则为 <a class="reference external" href="https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html">Twisted Failure</a> 。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">url</span></code> - 从中​​下载文件的URL。这是从:<cite>~get_media_requests</cite>
+方法返回的请求的url 。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">path</span></code> - 存储文件的路径（相对于:setting:<cite>FILES_STORE</cite>）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checksum</span></code> - 图像内容的 <a class="reference external" href="https://en.wikipedia.org/wiki/MD5">MD5 hash</a></p></li>
+</ul>
+</li>
+</ul>
+<p><a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> i接收的元组列表需要保证与
+<a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.get_media_requests" title="scrapy.pipelines.files.FilesPipeline.get_media_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_media_requests()</span></code></a> 方法返回请求的顺序相一致。</p>
+<p>下面是 <code class="docutils literal notranslate"><span class="pre">results</span></code> 参数的一个典型值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[(</span><span class="kc">True</span><span class="p">,</span>
+  <span class="p">{</span><span class="s1">&#39;checksum&#39;</span><span class="p">:</span> <span class="s1">&#39;2b00042f7481c7b056c4b410d28f33cf&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;full/0a79c461a4062ac383dc4fade7bc09f1384a3910.jpg&#39;</span><span class="p">,</span>
+   <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;http://www.example.com/files/product1.pdf&#39;</span><span class="p">}),</span>
+ <span class="p">(</span><span class="kc">False</span><span class="p">,</span>
+  <span class="n">Failure</span><span class="p">(</span><span class="o">...</span><span class="p">))]</span>
+</pre></div>
+</div>
+<p>默认 <a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.get_media_requests" title="scrapy.pipelines.files.FilesPipeline.get_media_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_media_requests()</span></code></a> 方法返回  <code class="docutils literal notranslate"><span class="pre">None</span></code> 意味着项目中没有图片可下载。</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.pipelines.files.FilesPipeline.item_completed">
+<code class="sig-name descname">item_completed</code><span class="sig-paren">(</span><em class="sig-param">results</em>, <em class="sig-param">item</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>当一个单独项目中的所有图片请求完成时（要么完成下载，要么因为某种原因下载失败）， <a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FilesPipeline.item_completed()</span></code></a> 方法将被调用。</p>
+<p><a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> 方法需要返回一个输出，其将被送到随后的项目管道阶段，因此你需要返回（或者丢弃）项目，如你在任意管道里所做的一样。</p>
+<p>H这里是一个 <a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> 方法的例子，其中我们将下载的图片路径（传入到results中）存储到 <code class="docutils literal notranslate"><span class="pre">file_paths</span></code>
+项目组中，如果其中没有图片，我们将丢弃项目:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">DropItem</span>
+
+<span class="k">def</span> <span class="nf">item_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+    <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ok</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">ok</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_paths</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">DropItem</span><span class="p">(</span><span class="s2">&quot;Item contains no files&quot;</span><span class="p">)</span>
+    <span class="n">item</span><span class="p">[</span><span class="s1">&#39;file_paths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_paths</span>
+    <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+<p>默认情况下， <a class="reference internal" href="#scrapy.pipelines.files.FilesPipeline.item_completed" title="scrapy.pipelines.files.FilesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> 方法返回项目</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-scrapy.pipelines.images"></span><p>请在此处查看您可以在自定义图像管道中覆盖的方法:</p>
+<dl class="class">
+<dt id="scrapy.pipelines.images.ImagesPipeline">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.pipelines.images.</code><code class="sig-name descname">ImagesPipeline</code><a class="headerlink" href="#scrapy.pipelines.images.ImagesPipeline" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p><a class="reference internal" href="#scrapy.pipelines.images.ImagesPipeline" title="scrapy.pipelines.images.ImagesPipeline"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImagesPipeline</span></code></a> 是 <code class="xref py py-class docutils literal notranslate"><span class="pre">FilesPipeline</span></code>,
+自定义字段名称和为图像添加自定义行为的扩展。</p>
+</div></blockquote>
+<dl class="method">
+<dt id="scrapy.pipelines.images.ImagesPipeline.get_media_requests">
+<code class="sig-name descname">get_media_requests</code><span class="sig-paren">(</span><em class="sig-param">item</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.pipelines.images.ImagesPipeline.get_media_requests" title="Permalink to this definition">¶</a></dt>
+<dd><p>与 <code class="xref py py-meth docutils literal notranslate"><span class="pre">FilesPipeline.get_media_requests()</span></code> 方法的工作方式相同，但对图像URL使用不同的字段名。</p>
+<p>必须为每个图像URL返回一个请求。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.pipelines.images.ImagesPipeline.item_completed">
+<code class="sig-name descname">item_completed</code><span class="sig-paren">(</span><em class="sig-param">results</em>, <em class="sig-param">item</em>, <em class="sig-param">info</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.pipelines.images.ImagesPipeline.item_completed" title="Permalink to this definition">¶</a></dt>
+<dd><p>当单个项目的所有图像请求都已完成时（要么下载完毕，要么由于某种原因失败），将调用 <a class="reference internal" href="#scrapy.pipelines.images.ImagesPipeline.item_completed" title="scrapy.pipelines.images.ImagesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ImagesPipeline.item_completed()</span></code></a> m方法。</p>
+<p>与 <code class="xref py py-meth docutils literal notranslate"><span class="pre">FilesPipeline.item_completed()</span></code> 方法的工作方式相同，但使用不同的字段名存储图像下载结果。</p>
+<p>默认情况下，该 <a class="reference internal" href="#scrapy.pipelines.images.ImagesPipeline.item_completed" title="scrapy.pipelines.images.ImagesPipeline.item_completed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">item_completed()</span></code></a> 方法返回该项</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="id14">
+<h2>定制图像管道的例子<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h2>
+<p>下面是一个图片管道的完整例子，其方法如上所示:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.pipelines.images</span> <span class="k">import</span> <span class="n">ImagesPipeline</span>
+<span class="kn">from</span> <span class="nn">scrapy.exceptions</span> <span class="k">import</span> <span class="n">DropItem</span>
+
+<span class="k">class</span> <span class="nc">MyImagesPipeline</span><span class="p">(</span><span class="n">ImagesPipeline</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_media_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">image_url</span> <span class="ow">in</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;image_urls&#39;</span><span class="p">]:</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">image_url</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">item_completed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="n">image_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ok</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">ok</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">image_paths</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DropItem</span><span class="p">(</span><span class="s2">&quot;Item contains no images&quot;</span><span class="p">)</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;image_paths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_paths</span>
+        <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="deploy.html" class="btn btn-neutral float-right" title="Deploying Spiders" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="leaks.html" class="btn btn-neutral float-left" title="Debugging memory leaks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

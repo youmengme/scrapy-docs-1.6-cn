@@ -1,0 +1,315 @@
+.. _topics-signals:
+
+=======
+信号(Signals)
+=======
+
+Scrapy广泛使用信号来通知特定事件发生的时间。您可以在Scrapy项目中捕获一些这些信号（例如，使用 :ref:`extension
+<topics-extensions>`) 来执行其他任务或扩展Scrapy以添加未开箱即用的功能。.
+
+即使信号提供了多个参数，捕获它们的处理程序也不需要接受所有这些参数 - 信号调度机制只会传递处理程序接收的参数。
+
+您可以通过:ref:`topics-api-signals` 连接信号（或发送您自己的 信号）.
+
+这是一个简单的示例，展示了如何捕获信号并执行某些操作:
+::
+
+    from scrapy import signals
+    from scrapy import Spider
+
+
+    class DmozSpider(Spider):
+        name = "dmoz"
+        allowed_domains = ["dmoz.org"]
+        start_urls = [
+            "http://www.dmoz.org/Computers/Programming/Languages/Python/Books/",
+            "http://www.dmoz.org/Computers/Programming/Languages/Python/Resources/",
+        ]
+
+
+        @classmethod
+        def from_crawler(cls, crawler, *args, **kwargs):
+            spider = super(DmozSpider, cls).from_crawler(crawler, *args, **kwargs)
+            crawler.signals.connect(spider.spider_closed, signal=signals.spider_closed)
+            return spider
+
+
+        def spider_closed(self, spider):
+            spider.logger.info('Spider closed: %s', spider.name)
+
+
+        def parse(self, response):
+            pass
+
+
+延迟信号处理程序
+========================
+
+有些信号支持从处理程序返回 `Twisted deferreds`_ 请参阅下面的 :ref:`topics-signals-ref` 以了解哪些信号.
+
+.. _Twisted deferreds: https://twistedmatrix.com/documents/current/core/howto/defer.html
+
+.. _topics-signals-ref:
+
+内置信号参考
+==========================
+
+.. module:: scrapy.signals
+   :synopsis: Signals definitions
+
+这是Scrapy内置信号列表及其含义。
+
+engine_started
+--------------
+
+.. signal:: engine_started
+.. function:: engine_started()
+
+    Scrapy引擎开始时发送。
+    
+    此信号支持从其处理程序返回延迟。
+
+.. note:: 此信号可能在Spider :signal:`spider_opened` 信号*之后*触发,
+    这取决于spider是如何启动的。所以 **不要** 依赖于这个信号在spider之前被触发 :signal:`spider_opened`.
+
+engine_stopped
+--------------
+
+.. signal:: engine_stopped
+.. function:: engine_stopped()
+
+    Scrapy引擎停止时发送（例如，爬网过程完成时）。
+
+    此信号支持从其处理程序返回延迟。
+
+item_scraped
+------------
+
+.. signal:: item_scraped
+.. function:: item_scraped(item, response, spider)
+
+    在项目已经通过所有
+    :ref:`topics-item-pipeline` 阶段（未被丢弃）之后，在项目抓取时发送 。
+
+    此信号支持从其处理程序返回延迟。
+
+    :param item: the item scraped
+    :type item: dict or :class:`~scrapy.item.Item` object
+
+    :param spider: the spider which scraped the item
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+    :param response: the response from where the item was scraped
+    :type response: :class:`~scrapy.http.Response` object
+
+item_dropped
+------------
+
+.. signal:: item_dropped
+.. function:: item_dropped(item, response, exception, spider)
+
+    在某个阶段引发异常时，从 :ref:`topics-item-pipeline`
+    删除项目后发送 :exc:`~scrapy.exceptions.DropItem` .
+
+    此信号支持从其处理程序返回延迟。
+    
+    :param item: the item dropped from the :ref:`topics-item-pipeline`
+    :type item: dict or :class:`~scrapy.item.Item` object
+
+    :param spider: the spider which scraped the item
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+    :param response: the response from where the item was dropped
+    :type response: :class:`~scrapy.http.Response` object
+
+    :param exception: the exception (which must be a
+        :exc:`~scrapy.exceptions.DropItem` subclass) which caused the item
+        to be dropped
+    :type exception: :exc:`~scrapy.exceptions.DropItem` exception
+
+item_error
+------------
+
+.. signal:: item_error
+.. function:: item_error(item, response, spider, failure)
+
+    d当 :ref:`topics-item-pipeline` 生成错误 （即引发异常）时发送, :exc:`~scrapy.exceptions.DropItem` 异常除外。
+
+    此信号支持从其处理程序返回延迟。
+    
+    :param item: the item dropped from the :ref:`topics-item-pipeline`
+    :type item: dict or :class:`~scrapy.item.Item` object
+
+    :param response: the response being processed when the exception was raised
+    :type response: :class:`~scrapy.http.Response` object
+
+    :param spider: the spider which raised the exception
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+    :param failure: the exception raised as a Twisted `Failure`_ object
+    :type failure: `Failure`_ object
+
+spider_closed
+-------------
+
+.. signal:: spider_closed
+.. function:: spider_closed(spider, reason)
+
+    spider关闭后发送,这可用于释放 :signal:`spider_opened` 上保留的每个spider资源.
+
+    此信号支持从其处理程序返回延迟。
+
+    :param spider: the spider which has been closed
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+    :param reason: a string which describes the reason why the spider was closed. If
+        it was closed because the spider has completed scraping, the reason
+        is ``'finished'``. Otherwise, if the spider was manually closed by
+        calling the ``close_spider`` engine method, then the reason is the one
+        passed in the ``reason`` argument of that method (which defaults to
+        ``'cancelled'``). If the engine was shutdown (for example, by hitting
+        Ctrl-C to stop it) the reason will be ``'shutdown'``.
+    :type reason: str
+
+spider_opened
+-------------
+
+.. signal:: spider_opened
+.. function:: spider_opened(spider)
+
+    在spider打开爬行后发送。这通常用于保留每个spider资源，但可用于打开spider时需要执行的任何任务。
+
+    此信号支持从其处理程序返回延迟。
+
+    :param spider: the spider which has been opened
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+spider_idle
+-----------
+
+.. signal:: spider_idle
+.. function:: spider_idle(spider)
+
+    当spider闲置时发送，这意味着spider没有进一步:
+
+        * 请求等待下载
+        * 请求预定
+        * 项目管道中正在处理的项目
+
+    如果在此信号的所有处理程序完成后空闲状态仍然存在，则引擎开始关闭蜘蛛。蜘蛛完成关闭后， :signal:`spider_closed` 信号被发送
+
+    您可以引发 :exc:`~scrapy.exceptions.DontCloseSpider` 异常以防止spider被关闭。
+    
+    此信号不支持从其处理程序返回延迟。
+
+    :param spider: the spider which has gone idle
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+.. note:: 在 :signal:`spider_idle` 处理程序中调度某些请求并 不能保证它可以阻止spider被关闭，尽管它有时可以。这是因为如果调度程序拒绝所有调度的请求（例如，由于重复而过滤），则spider可能仍然保持空闲。
+
+spider_error
+------------
+
+.. signal:: spider_error
+.. function:: spider_error(failure, response, spider)
+
+    蜘蛛回调生成错误时发送（即引发异常）。
+    
+    此信号不支持从其处理程序返回延迟。
+
+    :param failure: the exception raised as a Twisted `Failure`_ object
+    :type failure: `Failure`_ object
+
+    :param response: the response being processed when the exception was raised
+    :type response: :class:`~scrapy.http.Response` object
+
+    :param spider: the spider which raised the exception
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+request_scheduled
+-----------------
+
+.. signal:: request_scheduled
+.. function:: request_scheduled(request, spider)
+
+    在引擎调度 :class:`~scrapy.http.Request` 时发送，稍后下载。 
+
+    该信号不支持从其处理程序返回延迟。
+
+    :param request: the request that reached the scheduler
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider that yielded the request
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+request_dropped
+---------------
+
+.. signal:: request_dropped
+.. function:: request_dropped(request, spider)
+
+    当由引擎计划稍后下载的 :class:`~scrapy.http.Request`被调度程序拒绝时发送。
+
+    该信号不支持从其处理程序返回延迟
+
+    :param request: the request that reached the scheduler
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider that yielded the request
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+request_reached_downloader
+---------------------------
+
+.. signal:: request_reached_downloader
+.. function:: request_reached_downloader(request, spider)
+
+    当 :class:`~scrapy.http.Request` 到达下载程序时发送。.
+
+    该信号不支持从其处理程序返回延迟。
+
+    :param request: the request that reached downloader
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider that yielded the request
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+response_received
+-----------------
+
+.. signal:: response_received
+.. function:: response_received(response, request, spider)
+
+    当引擎从下载程序接收到新的 :class:`~scrapy.http.Response` 时发送。
+    
+    此信号不支持从其处理程序返回延迟。
+    
+    :param response: the response received
+    :type response: :class:`~scrapy.http.Response` object
+
+    :param request: the request that generated the response
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider for which the response is intended
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+response_downloaded
+-------------------
+
+.. signal:: response_downloaded
+.. function:: response_downloaded(response, request, spider)
+
+    下载 ``HTTPResponse`` 后立即由下载程序发送。
+
+    此信号不支持从其处理程序返回延迟。
+
+    :param response: the response downloaded
+    :type response: :class:`~scrapy.http.Response` object
+
+    :param request: the request that generated the response
+    :type request: :class:`~scrapy.http.Request` object
+
+    :param spider: the spider for which the response is intended
+    :type spider: :class:`~scrapy.spiders.Spider` object
+
+.. _Failure: https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html

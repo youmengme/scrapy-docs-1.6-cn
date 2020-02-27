@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Logging &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="统计收集" href="stats.html" />
+    <link rel="prev" title="例外" href="exceptions.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Logging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#topics-logging-levels">日志级别</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">如何记录消息</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spiders">从Spiders记录</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-logging-configuration">记录配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#topics-logging-settings">记录设置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">命令行选项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">高级定制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scrapy.utils.log">scrapy.utils.log 模块</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Logging</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/logging.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="logging">
+<span id="topics-logging"></span><h1>Logging<a class="headerlink" href="#logging" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-mod docutils literal notranslate"><span class="pre">scrapy.log</span></code> 已被弃用于其函数，支持显式调用Python标准日志记录。继续阅读以了解有关新记录系统的更多信息。</p>
+</div>
+<p>Scrapy 使用 <a class="reference external" href="https://docs.python.org/3/library/logging.html">Python’的内置日志记录系统</a> 进行事件记录。我们将提供一些简单的示例来帮助您入门，但对于更高级的用例，强烈建议您仔细阅读其文档。</p>
+<p>日志记录开箱即用，并且可以使用 <a class="reference internal" href="#topics-logging-settings"><span class="std std-ref">记录设置</span></a> 中列出的Scrapy设置在某种程度上进行配置。</p>
+<p>Scrapy 调用 <a class="reference internal" href="#scrapy.utils.log.configure_logging" title="scrapy.utils.log.configure_logging"><code class="xref py py-func docutils literal notranslate"><span class="pre">scrapy.utils.log.configure_logging()</span></code></a> 设置一些合理的默认值并在运行命令时在 <a class="reference internal" href="#topics-logging-settings"><span class="std std-ref">记录设置</span></a> 中处理这些设置，因此如果您正在运行脚本中的Scrapy，如脚本中 <a class="reference internal" href="practices.html#run-from-script"><span class="std std-ref">Run Scrapy from a script</span></a> ，则建议手动调用它。.</p>
+<div class="section" id="topics-logging-levels">
+<span id="id1"></span><h2>日志级别<a class="headerlink" href="#topics-logging-levels" title="Permalink to this headline">¶</a></h2>
+<p>Python的内置日志记录定义了5个不同的级别来指示给定日志消息的严重性。以下是标准的，按降序排列:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.CRITICAL</span></code> - 严重错误（严重程度最高）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.ERROR</span></code> - 经常出错</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.WARNING</span></code> - 用于警告信息</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code> - 用于提供信息</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">logging.DEBUG</span></code> - 用于调试消息（最低严重性）</p></li>
+</ol>
+</div>
+<div class="section" id="id2">
+<h2>如何记录消息<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>以下是如何使用 <code class="docutils literal notranslate"><span class="pre">logging.WARNING</span></code>
+级别记录消息的快速示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在任何标准5级别上都有用于发出日志消息的快捷方式，并且还有 <code class="docutils literal notranslate"><span class="pre">logging.log</span></code> 一种将给定级别作为参数的通用方法。如果需要，最后一个示例可以重写为:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span> <span class="s2">&quot;This is a warning&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>最重要的是，您可以创建不同的“记录器”来封装消息。（例如，通常的做法是为每个模块创建不同的记录器）。这些记录器可以独立配置，并允许分层构造。</p>
+<p>前面的示例在幕后使用根记录器，这是一个顶级记录器，所有消息都传播到该记录器（除非另有说明）。使用
+<code class="docutils literal notranslate"><span class="pre">logging</span></code> 帮助程序只是显式获取根记录器的快捷方式，因此这也是最后一个代码段的等效内容:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>您只需使用
+<code class="docutils literal notranslate"><span class="pre">logging.getLogger</span></code> 函数获取其名称即可使用其他记录器:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;mycustomlogger&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>最后，您可以使用 <code class="docutils literal notranslate"><span class="pre">__name__</span></code> 变量填充当前模块的路径，确保为您正在处理的任何模块设置自定义记录器:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This is a warning&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt>Module logging, <a class="reference external" href="https://docs.python.org/2/howto/logging.html">HowTo</a></dt><dd><p>基本日志教程</p>
+</dd>
+<dt>Module logging, <a class="reference external" href="https://docs.python.org/2/library/logging.html#logger-objects">Loggers</a></dt><dd><p>有关记录器的更多文档</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="spiders">
+<span id="topics-logging-from-spiders"></span><h2>从Spiders记录<a class="headerlink" href="#spiders" title="Permalink to this headline">¶</a></h2>
+<p>Scrapy 提供了一个 <a class="reference internal" href="spiders.html#scrapy.spiders.Spider.logger" title="scrapy.spiders.Spider.logger"><code class="xref py py-data docutils literal notranslate"><span class="pre">logger</span></code></a> 在每个Spider实例中提供了一个，可以像这样访问和使用:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;https://scrapinghub.com&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Parse function called on </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>该记录器是使用Spider的名称创建的，但您可以使用任何您想要的自定义Python记录器。例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;mycustomlogger&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;https://scrapinghub.com&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Parse function called on </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="topics-logging-configuration">
+<span id="id3"></span><h2>记录配置<a class="headerlink" href="#topics-logging-configuration" title="Permalink to this headline">¶</a></h2>
+<p>记录器本身不管理通过它们发送的消息的显示方式。对于此任务，可以将不同的“处理程序”附加到任何记录器实例，并将这些消息重定向到适当的目标，例如标准输出，文件，电子邮件等。</p>
+<p>默认情况下，Scrapy根据以下设置为根记录器设置和配置处理程序。</p>
+<div class="section" id="topics-logging-settings">
+<span id="id4"></span><h3>记录设置<a class="headerlink" href="#topics-logging-settings" title="Permalink to this headline">¶</a></h3>
+<p>这些设置可用于配置日志记录:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FILE</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_ENABLED"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENABLED</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_ENCODING"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENCODING</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_LEVEL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_FORMAT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FORMAT</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_DATEFORMAT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_DATEFORMAT</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_STDOUT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_STDOUT</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-LOG_SHORT_NAMES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_SHORT_NAMES</span></code></a></p></li>
+</ul>
+<p>前几个设置定义了日志消息的目标。如果
+<a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FILE</span></code></a> 设置，则通过根记录器发送的消息将重定向到 <a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FILE</span></code></a> 使用encoding 命名的文件
+<a class="reference internal" href="settings.html#std:setting-LOG_ENCODING"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENCODING</span></code></a>. 如果没有设置和 <a class="reference internal" href="settings.html#std:setting-LOG_ENABLED"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENABLED</span></code></a> 是 <code class="docutils literal notranslate"><span class="pre">True</span></code>,日志消息将显示在标准错误。最后，如果
+<a class="reference internal" href="settings.html#std:setting-LOG_ENABLED"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENABLED</span></code></a> 是 <code class="docutils literal notranslate"><span class="pre">False</span></code>, 则不会有任何可见的日志输出。</p>
+<p><a class="reference internal" href="settings.html#std:setting-LOG_LEVEL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code></a> 确定要显示的最低严重性级别，将过滤掉那些严重性较低的消息。它的范围是 <a class="reference internal" href="#topics-logging-levels"><span class="std std-ref">日志级别</span></a> 中列出的可能级别。.</p>
+<p><a class="reference internal" href="settings.html#std:setting-LOG_FORMAT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FORMAT</span></code></a> 和 <a class="reference internal" href="settings.html#std:setting-LOG_DATEFORMAT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_DATEFORMAT</span></code></a> 指定用作所有消息的布局的格式字符串。这些字符串可以包含
+&lt;<a class="reference external" href="https://docs.python.org/2/library/logging.html#logrecord-attributes">https://docs.python.org/2/library/logging.html#logrecord-attributes</a>&gt;`_ 和
+<a class="reference external" href="https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior">datetime’s strftime and strptime directives</a>
+中分别列出的任何占位符。</p>
+<p>如果 <a class="reference internal" href="settings.html#std:setting-LOG_SHORT_NAMES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_SHORT_NAMES</span></code></a> 设置，则日志将不显示打印日志的scrapy组件。默认情况下未设置，因此日志包含负责该日志输出的scrapy组件。</p>
+</div>
+<div class="section" id="id5">
+<h3>命令行选项<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<p>有可用于所有命令的命令行参数，可用于覆盖有关日志记录的某些Scrapy设置。</p>
+<p>–logfile FILE</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--logfile</span> <span class="pre">FILE</span></code></dt><dd><p>Overrides <a class="reference internal" href="settings.html#std:setting-LOG_FILE"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_FILE</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--loglevel/-L</span> <span class="pre">LEVEL</span></code></dt><dd><p>Overrides <a class="reference internal" href="settings.html#std:setting-LOG_LEVEL"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_LEVEL</span></code></a></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--nolog</span></code></dt><dd><p>Sets <a class="reference internal" href="settings.html#std:setting-LOG_ENABLED"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_ENABLED</span></code></a> to <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt>Module <a class="reference external" href="https://docs.python.org/2/library/logging.handlers.html">logging.handlers</a></dt><dd><p>有关可用处理程序的进一步文档</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>高级定制<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>由于Scrapy使用stdlib日志记录模块，因此您可以使用stdlib日志记录的所有功能自定义日志记录。</p>
+<p>例如，假设您正在抓取一个返回许多HTTP 404和500响应的网站，并且您希望隐藏所有这样的消息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2016</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">16</span> <span class="mi">22</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">06</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">spidermiddlewares</span><span class="o">.</span><span class="n">httperror</span><span class="p">]</span> <span class="n">INFO</span><span class="p">:</span> <span class="n">Ignoring</span>
+<span class="n">response</span> <span class="o">&lt;</span><span class="mi">500</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">quotes</span><span class="o">.</span><span class="n">toscrape</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">page</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="mi">34</span><span class="o">/&gt;</span><span class="p">:</span> <span class="n">HTTP</span> <span class="n">status</span> <span class="n">code</span>
+<span class="ow">is</span> <span class="ow">not</span> <span class="n">handled</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">allowed</span>
+</pre></div>
+</div>
+<p>首先要注意的是记录器名称 - 它在括号中:
+<code class="docutils literal notranslate"><span class="pre">[scrapy.spidermiddlewares.httperror]</span></code>. 如果你得到 <code class="docutils literal notranslate"><span class="pre">[scrapy]</span></code>
+<a class="reference internal" href="settings.html#std:setting-LOG_SHORT_NAMES"><code class="xref std std-setting docutils literal notranslate"><span class="pre">LOG_SHORT_NAMES</span></code></a> 可能会设置为True; 将其设置为False并重新运行爬取。</p>
+<p>接下来，我们可以看到消息具有INFO级别。要隐藏它，我们应该将日志记录级别设置为 <code class="docutils literal notranslate"><span class="pre">scrapy.spidermiddlewares.httperror</span></code>
+高于INFO; INFO之后的下一级是警告。它可以在 spider的``__init__`` 方法中完成:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;scrapy.spidermiddlewares.httperror&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>如果再次运行此爬虫，则
+<code class="docutils literal notranslate"><span class="pre">scrapy.spidermiddlewares.httperror</span></code> 记录器中的INFO消息 将消失。</p>
+</div>
+</div>
+<div class="section" id="module-scrapy.utils.log">
+<span id="scrapy-utils-log"></span><h2>scrapy.utils.log 模块<a class="headerlink" href="#module-scrapy.utils.log" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scrapy.utils.log.configure_logging">
+<code class="sig-prename descclassname">scrapy.utils.log.</code><code class="sig-name descname">configure_logging</code><span class="sig-paren">(</span><em class="sig-param">settings=None</em>, <em class="sig-param">install_root_handler=True</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.utils.log.configure_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize logging defaults for Scrapy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>settings</strong> (dict, <a class="reference internal" href="api.html#scrapy.settings.Settings" title="scrapy.settings.Settings"><code class="xref py py-class docutils literal notranslate"><span class="pre">Settings</span></code></a> object or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – settings used to create and configure a handler for the
+root logger (default: None).</p></li>
+<li><p><strong>install_root_handler</strong> (<em>bool</em>) – whether to install root logging handler
+(default: True)</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function does:</p>
+<ul class="simple">
+<li><p>Route warnings and twisted logging through Python standard logging</p></li>
+<li><p>Assign DEBUG and ERROR level to Scrapy and Twisted loggers respectively</p></li>
+<li><p>Route stdout to log if LOG_STDOUT setting is True</p></li>
+</ul>
+<p>When <code class="docutils literal notranslate"><span class="pre">install_root_handler</span></code> is True (default), this function also
+creates a handler for the root logger according to given settings
+(see <a class="reference internal" href="#topics-logging-settings"><span class="std std-ref">记录设置</span></a>). You can override default options
+using <code class="docutils literal notranslate"><span class="pre">settings</span></code> argument. When <code class="docutils literal notranslate"><span class="pre">settings</span></code> is empty or None, defaults
+are used.</p>
+<p><code class="docutils literal notranslate"><span class="pre">configure_logging</span></code> 在使用Scrapy命令时会自动调用，但在运行自定义脚本时需要显式调用。在这种情况下，不需要使用它，但建议使用它。</p>
+<p>如果您打算自己配置处理程序，仍然建议您调用此函数，并传递install_root_handler = False。请记住，在这种情况下默认情况下不会设置任何日志输出。</p>
+<p>要开始手动配置日志记录的输出，可以使用
+<a class="reference external" href="https://docs.python.org/2/library/logging.html#logging.basicConfig">logging.basicConfig()</a> 来设置基本的根处理程序。这是关于如何将 <a href="#id7"><span class="problematic" id="id8">``</span></a>INFO``消息重定向或更高的消息到文件的示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">scrapy.utils.log</span> <span class="k">import</span> <span class="n">configure_logging</span>
+
+<span class="n">configure_logging</span><span class="p">(</span><span class="n">install_root_handler</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;log.txt&#39;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(levelname)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>有关以这种方式使用Scrapy的更多详细信息，请参阅 <a class="reference internal" href="practices.html#run-from-script"><span class="std std-ref">Run Scrapy from a script</span></a></p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="stats.html" class="btn btn-neutral float-right" title="统计收集" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="exceptions.html" class="btn btn-neutral float-left" title="例外" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

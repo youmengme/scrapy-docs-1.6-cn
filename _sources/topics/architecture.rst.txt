@@ -1,0 +1,149 @@
+.. _topics-architecture:
+
+=====================
+架构概述
+=====================
+
+本文档描述了Scrapy的体系结构及其组件的交互方式。
+
+概述
+========
+
+下图显示了Scrapy体系结构及其组件的概述以及系统内部发生的数据流的概述（由红色箭头显示）。下面包含组件的简要说明，并提供链接以获取有关它们的更多详细信息。数据流描述如下。
+
+.. _data-flow:
+
+数据流
+=========
+
+.. image:: _images/scrapy_architecture_02.png
+   :width: 700
+   :height: 470
+   :alt: Scrapy architecture
+
+Scrapy中的数据流由执行引擎控制，如下所示：
+
+1. :ref:`Engine <component-engine>` 从
+   :ref:`Spider <component-spiders>` 获取要爬取的初始请求。
+
+2. :ref:`Engine <component-engine>` 在
+   :ref:`Scheduler <component-scheduler>` 中安排请求并请求下一个要爬行的请求。
+
+3. :ref:`Scheduler <component-scheduler>` 将下一个请求返回到
+   :ref:`Engine <component-engine>`.
+
+4. :ref:`Engine <component-engine>` 发生请求到
+   :ref:`Downloader <component-downloader>`, 通过
+   :ref:`Downloader Middlewares <component-downloader-middleware>` (见
+   :meth:`~scrapy.downloadermiddlewares.DownloaderMiddleware.process_request`).
+
+5. 页面完成下载后，
+   :ref:`Downloader <component-downloader>` 生成一个Response（带有该页面），并通过
+   :ref:`Downloader Middlewares <component-downloader-middleware>` 将其发送到Engine，(见
+   :meth:`~scrapy.downloadermiddlewares.DownloaderMiddleware.process_response`).
+
+6. :ref:`Engine <component-engine>` 收到
+   :ref:`Downloader <component-downloader>` 的响应并通过
+   :ref:`Spider Middleware <component-spider-middleware>` 发送到
+   :ref:`Spider <component-spiders>` 进行出理 (见
+   :meth:`~scrapy.spidermiddlewares.SpiderMiddleware.process_spider_input`).
+
+7. :ref:`Spider <component-spiders>` 通过
+   :ref:`Spider Middleware <component-spider-middleware>` 处理响应并向
+   :ref:`Engine <component-engine>`, 返回爬取的项目和新请求 (见
+   :meth:`~scrapy.spidermiddlewares.SpiderMiddleware.process_spider_output`).
+
+8. :ref:`Engine <component-engine>` 将已处理的项目发送到
+   :ref:`Item Pipelines <component-pipelines>`, 然后将已处理的请求发送到
+   :ref:`Scheduler <component-scheduler>` 并请求下一个请求进行爬取。
+
+9. 该过程重复（从步骤1开始），直到不再有来自
+   :ref:`Scheduler <component-scheduler>` 的请求为止
+
+组件
+==========
+
+.. _component-engine:
+
+Engine（引擎）
+-------------
+
+Engine负责控制系统所有组件之间的数据流，并在发生某些操作时触发事件。 有关更多详细信息，请参阅上面的
+:ref:`Data Flow <data-flow>` 部分。
+
+.. _component-scheduler:
+
+Scheduler（调度器）
+---------
+
+Scheduler程序接收来自引擎的请求，并在引擎请求它们时将它们排入队列以便稍后发送（发送到 Engine）
+
+.. _component-downloader:
+
+Downloader（下载器）
+----------
+
+Downloader负责获取网页并将其送入Engine，Engine将网页发送到Spiders.
+
+.. _component-spiders:
+
+Spiders（爬虫）
+-------
+
+Spiders是由Scrapy用户编写的自定义类，用于解析响应并从中提取项目（也称为已删除项目）或其他要遵循的请求。有关更多信息，请参阅 :ref:`topics-spiders`.
+
+.. _component-pipelines:
+
+Item Pipeline（项目管道）
+-------------
+
+Item Pipeline负责处理被Spiders提取（或爬取）的项目。典型的任务包括清理，验证和持久性（如将项目存储在数据库中）。 有关详细信息，请参阅 :ref:`topics-item-pipeline`.
+
+.. _component-downloader-middleware:
+
+Downloader middlewares（下载中间件）
+----------------------
+
+Downloader middlewares是位于Engine和Downloader之间的特定钩子（实施控制），当它们从Engine传递到Downloader时处理请求，以及从Downloader传递到Engine的响应。
+
+如果您需要执行以下操作之一，请使用Downloader middlewares：
+
+* 在将请求发送到Downloader之前处理请求（即在Scrapy将请求发送到网站之前）;
+* 在将它传递给Spider之前改变收到的响应;
+* 发送新的请求，而不是将收到的响应传递给Spider;
+* 在没有抓取网页的情况下将响应传递给Spider;
+* 放弃一些请求。
+
+有关更多信息，请参阅 :ref:`topics-downloader-middleware`.
+
+.. _component-spider-middleware:
+
+Spider middlewares（爬虫中间件）
+------------------
+
+Spider middlewares是位于Engine和Spider之间的特定钩子，能够处理Spider输入（响应）和输出（项目和请求）。
+
+如果需要，请使用Spider middleware
+
+* Spider回调的后期处理输出 - 更改/添加/删除请求或项目;
+* 后处理start_requests;
+* 处理Spider异常;
+* 根据响应内容调用errback而不是回调某些请求。
+
+有关更多信息，请参阅 :ref:`topics-spider-middleware`.
+
+事件驱动网络
+=======================
+
+Scrapy 是用 `Twisted`_ 编写的， Twisted是一个流行的事件驱动的Python网络框架。因此，它使用非阻塞（也称为异步）代码实现并发。
+
+有关异步编程和Twisted的更多信息，请参阅以下链接：
+
+* `Introduction to Deferreds in Twisted`_
+* `Twisted - hello, asynchronous programming`_
+* `Twisted Introduction - Krondo`_
+
+.. _Twisted: https://twistedmatrix.com/trac/
+.. _Introduction to Deferreds in Twisted: https://twistedmatrix.com/documents/current/core/howto/defer-intro.html
+.. _Twisted - hello, asynchronous programming: http://jessenoller.com/2009/02/11/twisted-hello-asynchronous-programming/
+.. _Twisted Introduction - Krondo: http://krondo.com/an-introduction-to-asynchronous-programming-and-twisted/

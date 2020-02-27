@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Telnet 控制台 &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Web 服务" href="webservice.html" />
+    <link rel="prev" title="发送电子邮件" href="email.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Telnet 控制台</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id3">如何访问telnet控制台</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">telnet控制台中的可用变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Telnet控制台用法示例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">查看引擎状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scrapy">暂停，恢复和停止Scrapy引擎</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Telnet控制台信号</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Telnet 设置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#telnetconsole-port">TELNETCONSOLE_PORT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#telnetconsole-host">TELNETCONSOLE_HOST</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#telnetconsole-username">TELNETCONSOLE_USERNAME</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#telnetconsole-password">TELNETCONSOLE_PASSWORD</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Telnet 控制台</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/telnetconsole.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-scrapy.extensions.telnet">
+<span id="telnet"></span><span id="topics-telnetconsole"></span><h1>Telnet 控制台<a class="headerlink" href="#module-scrapy.extensions.telnet" title="Permalink to this headline">¶</a></h1>
+<p>Scrapy配有内置的telnet控制台，用于检查和控制Scrapy运行过程。telnet控制台只是在Scrapy进程中运行的常规python shell，所以你可以从中做任何事情。</p>
+<p>telnet控制台是一个 <a class="reference internal" href="extensions.html#topics-extensions-ref"><span class="std std-ref">内置Scrapy扩展</span></a> 默认启用，但你也可以根据需要禁用它。有关扩展本身的更多信息，请参阅
+<a class="reference internal" href="extensions.html#topics-extensions-ref-telnetconsole"><span class="std std-ref">Telnet控制台扩展</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>通过公共网络使用telnet控制台是不安全的，因为telnet不提供任何传输层安全性。拥有用户名/密码身份验证不会改变它。.</p>
+<p>预期用途是在本地连接到正在运行的Scrapy蜘蛛（蜘蛛进程和telnet客户端在同一台计算机上）或通过安全连接（VPN，SSH隧道）连接。请避免在不安全的连接上使用telnet控制台，或使用 :setting:<a href="#id1"><span class="problematic" id="id2">`</span></a>TELNETCONSOLE_ENABLED`选项完全禁用它。</p>
+</div>
+<div class="section" id="id3">
+<h2>如何访问telnet控制台<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Telnet控制台侦听
+<a class="reference internal" href="#std:setting-TELNETCONSOLE_PORT"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TELNETCONSOLE_PORT</span></code></a> 设置中定义的TCP端口 ，默认为 <code class="docutils literal notranslate"><span class="pre">6023</span></code>. 要访问控制台，您需要键入:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>telnet localhost 6023
+Trying localhost...
+Connected to localhost.
+Escape character is &#39;^]&#39;.
+Username:
+Password:
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>默认情况下，用户名为 <code class="docutils literal notranslate"><span class="pre">scrapy</span></code> 密码自动生成。自动生成的密码可以在scrapy日志中看到，例如下面的示例:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>2018-10-16 14:35:21 [scrapy.extensions.telnet] INFO: Telnet Password: 16f92501e8a59326
+</pre></div>
+</div>
+<p>默认用户名和密码可以通过设置
+<a class="reference internal" href="#std:setting-TELNETCONSOLE_USERNAME"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TELNETCONSOLE_USERNAME</span></code></a> 和 <a class="reference internal" href="#std:setting-TELNETCONSOLE_PASSWORD"><code class="xref std std-setting docutils literal notranslate"><span class="pre">TELNETCONSOLE_PASSWORD</span></code></a> 覆盖.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>用户名和密码仅提供有限的保护，因为telnet不使用安全传输 - 默认情况下，即使设置了用户名和密码，流量也不会加密。</p>
+</div>
+<p>您需要在Windows中默认安装的telnet程序，以及大多数Linux发行版。</p>
+</div>
+<div class="section" id="id4">
+<h2>telnet控制台中的可用变量<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>telnet控制台就像在Scrapy进程中运行的常规Python shell一样，所以你可以做任何事情，包括导入新模块等。</p>
+<p>但是，telnet控制台附带了一些为方便起见而定义的默认变量:</p>
+</div>
+<div class="section" id="id5">
+<h2>Telnet控制台用法示例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>以下是您可以使用telnet控制台执行的一些示例任务:</p>
+<div class="section" id="id6">
+<h3>查看引擎状态<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>您可以使用Scrapy engine的 <code class="docutils literal notranslate"><span class="pre">est()</span></code> 方法使用telnet控制台快速显示其状态:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; est()
+Execution engine status
+
+time()-engine.start_time                        : 8.62972998619
+engine.has_capacity()                           : False
+len(engine.downloader.active)                   : 16
+engine.scraper.is_idle()                        : False
+engine.spider.name                              : followall
+engine.spider_is_idle(engine.spider)            : False
+engine.slot.closing                             : False
+len(engine.slot.inprogress)                     : 16
+len(engine.slot.scheduler.dqs or [])            : 0
+len(engine.slot.scheduler.mqs)                  : 92
+len(engine.scraper.slot.queue)                  : 0
+len(engine.scraper.slot.active)                 : 0
+engine.scraper.slot.active_size                 : 0
+engine.scraper.slot.itemproc_size               : 0
+engine.scraper.slot.needs_backout()             : False
+</pre></div>
+</div>
+</div>
+<div class="section" id="scrapy">
+<h3>暂停，恢复和停止Scrapy引擎<a class="headerlink" href="#scrapy" title="Permalink to this headline">¶</a></h3>
+<p>暂停:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.pause()
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>恢复:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.unpause()
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>停止:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>telnet localhost 6023
+&gt;&gt;&gt; engine.stop()
+Connection closed by foreign host.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2>Telnet控制台信号<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="std:signal-update_telnet_vars"></span><dl class="function">
+<dt id="scrapy.extensions.telnet.update_telnet_vars">
+<code class="sig-prename descclassname">scrapy.extensions.telnet.</code><code class="sig-name descname">update_telnet_vars</code><span class="sig-paren">(</span><em class="sig-param">telnet_vars</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.extensions.telnet.update_telnet_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>在telnet控制台打开之前发送。您可以连接此信号以添加，删除或更新将在telnet本地命名空间中可用的变量。为此，您需要更新
+<code class="docutils literal notranslate"><span class="pre">telnet_vars</span></code> 处理程序中的 dict。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>telnet_vars</strong> (<em>dict</em>) – the dict of telnet variables</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="id8">
+<h2>Telnet 设置<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>这些是控制telnet控制台行为的设置:</p>
+<div class="section" id="telnetconsole-port">
+<span id="std:setting-TELNETCONSOLE_PORT"></span><h3>TELNETCONSOLE_PORT<a class="headerlink" href="#telnetconsole-port" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">[6023,</span> <span class="pre">6073]</span></code></p>
+<p>用于telnet控制台的端口范围。如果设置为 <code class="docutils literal notranslate"><span class="pre">None</span></code> 或 <code class="docutils literal notranslate"><span class="pre">0</span></code>, 则使用动态分配的端口。</p>
+</div>
+<div class="section" id="telnetconsole-host">
+<span id="std:setting-TELNETCONSOLE_HOST"></span><h3>TELNETCONSOLE_HOST<a class="headerlink" href="#telnetconsole-host" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">'127.0.0.1'</span></code></p>
+<p>telnet控制台应该监听的接口</p>
+</div>
+<div class="section" id="telnetconsole-username">
+<span id="std:setting-TELNETCONSOLE_USERNAME"></span><h3>TELNETCONSOLE_USERNAME<a class="headerlink" href="#telnetconsole-username" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">'scrapy'</span></code></p>
+<p>用于telnet控制台的用户名</p>
+</div>
+<div class="section" id="telnetconsole-password">
+<span id="std:setting-TELNETCONSOLE_PASSWORD"></span><h3>TELNETCONSOLE_PASSWORD<a class="headerlink" href="#telnetconsole-password" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<p>用于telnet控制台的密码，默认行为是自动生成密码</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="webservice.html" class="btn btn-neutral float-right" title="Web 服务" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="email.html" class="btn btn-neutral float-left" title="发送电子邮件" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

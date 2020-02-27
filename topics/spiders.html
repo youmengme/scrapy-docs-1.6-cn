@@ -1,0 +1,936 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>爬虫（Spiders） &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="选择器" href="selectors.html" />
+    <link rel="prev" title="命令行工具" href="commands.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">爬虫（Spiders）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scrapy-spider">scrapy.Spider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spider-arguments">Spider arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-spiders">Generic Spiders</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#crawlspider">CrawlSpider</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#crawling-rules">Crawling rules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">CrawlSpider 示例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xmlfeedspider">XMLFeedSpider</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">XMLFeedSpider 示例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#csvfeedspider">CSVFeedSpider</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">CSVFeedSpider 示例</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#sitemapspider">SitemapSpider</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">SitemapSpider样例</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>爬虫（Spiders）</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/spiders.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="spiders">
+<span id="topics-spiders"></span><h1>爬虫（Spiders）<a class="headerlink" href="#spiders" title="Permalink to this headline">¶</a></h1>
+<p>Spider 类定义了如何爬取某个（或某些）网站。包括了爬取的动作（例如:是否跟进链接）以及如何从网页的内容中提取结构化数据（爬取item）。 换句话说，Spider 就是您定义爬取的动作及分析某个网页(或者是有些网页)的地方。</p>
+<p>对于spider，爬取循环做着下面的事情:</p>
+<ol class="arabic">
+<li><p>首先生成抓取第一个URL的初始 request，request 下载完成后生成 response ，然后指定对 response 要使用的回调函数。</p>
+<p>通过调用
+<a class="reference internal" href="#scrapy.spiders.Spider.start_requests" title="scrapy.spiders.Spider.start_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_requests()</span></code></a> 方法（默认情况下）为
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 为方法中指定的URL
+<a class="reference internal" href="#scrapy.spiders.Spider.start_urls" title="scrapy.spiders.Spider.start_urls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">start_urls</span></code></a> 和
+<a class="reference internal" href="#scrapy.spiders.Spider.parse" title="scrapy.spiders.Spider.parse"><code class="xref py py-attr docutils literal notranslate"><span class="pre">parse</span></code></a> 方法生成请求的回调函数的 方法获得的。</p>
+</li>
+<li><p>在回调函数中，您将解析 Response（网页）并返回带有提取的数据的 dict, <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> objects,
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 对象， 对象或这些对象的可迭代容器。这些请求还将包含回调（可能是相同的），然后由 Scrapy 下载，然后由指定的回调处理它们的响应。</p></li>
+<li><p>在回调函数中，您通常使用
+<a class="reference internal" href="selectors.html#topics-selectors"><span class="std std-ref">选择器</span></a> 来解析页面内容（但您也可以使用BeautifulSoup，lxml或您喜欢的任何解析器），并使用解析的数据生成 Item。</p></li>
+<li><p>最后，从爬虫返回的 Item 通常将持久存储到数据库（在某些 <span class="xref std std-ref">Item Pipeline &lt;topics-item-pipeline&gt;`中）或使用 :ref:`topics-feed-exports</span> 写入文件。</p></li>
+</ol>
+<p>虽然这个循环（或多或少）适用于任何种类的 spider，Scrapy 实现了不同种类的默认 spider 用于不同的需求。我们将在这里谈论这些类型。</p>
+<span class="target" id="module-scrapy.spiders"></span><div class="section" id="scrapy-spider">
+<span id="topics-spiders-ref"></span><h2>scrapy.Spider<a class="headerlink" href="#scrapy-spider" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scrapy.spiders.Spider">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">Spider</code><a class="headerlink" href="#scrapy.spiders.Spider" title="Permalink to this definition">¶</a></dt>
+<dd><p>这是最简单的爬虫，每个其他爬虫必须继承该类（包括 Scrapy 自带的一些爬虫，以及你自己写的爬虫）。它不提供任何特殊功能。它只是提供了一个默认的 <a class="reference internal" href="#scrapy.spiders.Spider.start_requests" title="scrapy.spiders.Spider.start_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_requests()</span></code></a> 实现，它读取并请求爬虫的 <a class="reference internal" href="#scrapy.spiders.Spider.start_urls" title="scrapy.spiders.Spider.start_urls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">start_urls</span></code></a> 属性，并为每个结果响应调用爬虫的 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 方法.</p>
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#scrapy.spiders.Spider.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>定义此爬虫名称的字符串。爬虫名称是爬虫如何由 Scrapy 定位（和实例化），因此它必须是唯一的。但是，您可以生成多个相同的爬虫实例(instance)，这没有任何限制。 name是spider最重要的属性，而且是必须的。</p>
+<p>如果爬虫抓取单个域，通常的做法是在域之后命名爬虫，无论是否有 <a class="reference external" href="https://en.wikipedia.org/wiki/Top-level_domain">TLD</a>. 因此，例如 <code class="docutils literal notranslate"><span class="pre">mywebsite.com</span></code> 经常会调用 爬取的爬虫
+<code class="docutils literal notranslate"><span class="pre">mywebsite</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>在Python 2中，这必须只是ASCII。</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.allowed_domains">
+<code class="sig-name descname">allowed_domains</code><a class="headerlink" href="#scrapy.spiders.Spider.allowed_domains" title="Permalink to this definition">¶</a></dt>
+<dd><p>包含允许此爬网爬行的域的字符串的可选列表。如果
+<a class="reference internal" href="spider-middleware.html#scrapy.spidermiddlewares.offsite.OffsiteMiddleware" title="scrapy.spidermiddlewares.offsite.OffsiteMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffsiteMiddleware</span></code></a> 启用，则不会遵循对不属于此列表（或其子域）中指定的域名的URL的请求 。</p>
+<p>假设您的目标网址是 <code class="docutils literal notranslate"><span class="pre">https://www.example.com/1.html</span></code>,
+然后添加 <code class="docutils literal notranslate"><span class="pre">'example.com'</span></code> 到列表中。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.start_urls">
+<code class="sig-name descname">start_urls</code><a class="headerlink" href="#scrapy.spiders.Spider.start_urls" title="Permalink to this definition">¶</a></dt>
+<dd><p>当没有指定特定URL时，蜘蛛将开始爬网的URL列表。因此，下载的第一页将是此处列出的页面。后续 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 将从起始URL中包含的数据连续生成。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.custom_settings">
+<code class="sig-name descname">custom_settings</code><a class="headerlink" href="#scrapy.spiders.Spider.custom_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>运行此蜘蛛时将从项目范围配置中覆盖的设置字典。必须将其定义为类属性，因为在实例化之前更新了设置。</p>
+<p>请通过:
+<a class="reference internal" href="settings.html#topics-settings-ref"><span class="std std-ref">内置设置参考</span></a>  查看支持的设置.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.crawler">
+<code class="sig-name descname">crawler</code><a class="headerlink" href="#scrapy.spiders.Spider.crawler" title="Permalink to this definition">¶</a></dt>
+<dd><dl>
+<dt>该属性在初始化class后,由类方法 <a class="reference internal" href="item-pipeline.html#from_crawler" title="from_crawler"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_crawler()</span></code></a> 设置, 并且链接了本spider实例对应的</dt><dd><p><a class="reference internal" href="api.html#scrapy.crawler.Crawler" title="scrapy.crawler.Crawler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Crawler</span></code></a> 对象.</p>
+<p>Crawler包含了很多项目中的组件,作为单一的入口点 (例如插件,中间件,信号管理器等). 请查看  <a class="reference internal" href="api.html#topics-api-crawler"><span class="std std-ref">Crawler API</span></a> 来了解更多.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.settings">
+<code class="sig-name descname">settings</code><a class="headerlink" href="#scrapy.spiders.Spider.settings" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>运行此爬虫的配置。这是一个</dt><dd><p><a class="reference internal" href="api.html#scrapy.settings.Settings" title="scrapy.settings.Settings"><code class="xref py py-class docutils literal notranslate"><span class="pre">Settings</span></code></a> 实例，请参阅
+<a class="reference internal" href="settings.html#topics-settings"><span class="std std-ref">设置</span></a> 主题以获取有关此主题的详细介绍。</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.Spider.logger">
+<code class="sig-name descname">logger</code><a class="headerlink" href="#scrapy.spiders.Spider.logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>使用Spider创建的Python记录器的 <a class="reference internal" href="#scrapy.spiders.Spider.name" title="scrapy.spiders.Spider.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a>. 您可以使用它来发送日志消息，如
+<a class="reference internal" href="logging.html#topics-logging-from-spiders"><span class="std std-ref">从Spiders记录</span></a> 中所述 。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.Spider.from_crawler">
+<code class="sig-name descname">from_crawler</code><span class="sig-paren">(</span><em class="sig-param">crawler</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Spider.from_crawler" title="Permalink to this definition">¶</a></dt>
+<dd><p>这是Scrapy用于创建爬虫的类方法。</p>
+<p>您可能不需要直接覆盖它，因为默认实现充当方法的代理 <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> 使用给定的参数 <cite>args</cite> 和命名参数 <cite>kwargs</cite> 调用它。</p>
+<p>尽管如此，此方法 在新实例中设置 <a class="reference internal" href="#scrapy.spiders.Spider.crawler" title="scrapy.spiders.Spider.crawler"><code class="xref py py-attr docutils literal notranslate"><span class="pre">crawler</span></code></a> 和 <a class="reference internal" href="#scrapy.spiders.Spider.settings" title="scrapy.spiders.Spider.settings"><code class="xref py py-attr docutils literal notranslate"><span class="pre">settings</span></code></a>
+属性，以便稍后可以在爬虫代码中访问它们。</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>crawler</strong> (<a class="reference internal" href="api.html#scrapy.crawler.Crawler" title="scrapy.crawler.Crawler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Crawler</span></code></a> instance) – 爬虫将被绑到的爬行器</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – a传递给 <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> 方法的参数</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – 传递给 <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> 方法的关键字参数</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.Spider.start_requests">
+<code class="sig-name descname">start_requests</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Spider.start_requests" title="Permalink to this definition">¶</a></dt>
+<dd><p>此方法必须返回一个带有第一个爬网请求的iterable。当蜘蛛打开进行刮擦时，Scrapy会调用它。Scrapy只调用一次，因此
+<a class="reference internal" href="#scrapy.spiders.Spider.start_requests" title="scrapy.spiders.Spider.start_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_requests()</span></code></a> 作为生成器实现是安全的。</p>
+<p>该方法的默认实现是使用 <a class="reference internal" href="#scrapy.spiders.Spider.start_urls" title="scrapy.spiders.Spider.start_urls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">start_urls</span></code></a> 的url生成` <cite>Request(url, dont_filter=True)`</cite></p>
+<p>如果您想要修改最初爬取某个网站的Request对象，您可以重写(override)该方法。 例如，如果您需要在启动时以POST登录某个网站，你可以这么写:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">FormRequest</span><span class="p">(</span><span class="s2">&quot;http://www.example.com/login&quot;</span><span class="p">,</span>
+                                   <span class="n">formdata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span> <span class="s1">&#39;secret&#39;</span><span class="p">},</span>
+                                   <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logged_in</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">logged_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="c1"># here you would extract links to follow and return Requests for</span>
+        <span class="c1"># each of them, with another callback</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.Spider.parse">
+<code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">response</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Spider.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>这是Scrapy在其请求未指定回调时处理下载的响应时使用的默认回调。</p>
+<p><code class="docutils literal notranslate"><span class="pre">parse</span></code> 方法负责处理响应并返回要删除的数据和/或更多URL。其他请求回调与 <a class="reference internal" href="#scrapy.spiders.Spider" title="scrapy.spiders.Spider"><code class="xref py py-class docutils literal notranslate"><span class="pre">Spider</span></code></a> 类具有相同的要求。</p>
+<p>T方法以及任何其他Request回调必须返回可迭代的 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 和/或 dicts 或 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 对象.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>response</strong> (<a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a>) – 对解析的响应</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.Spider.log">
+<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="optional">[</span>, <em class="sig-param">level</em>, <em class="sig-param">component</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Spider.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>通过Spider发送日志消息的包装器， <a class="reference internal" href="#scrapy.spiders.Spider.logger" title="scrapy.spiders.Spider.logger"><code class="xref py py-attr docutils literal notranslate"><span class="pre">logger</span></code></a>,
+用于向后兼容。有关更多信息，请参阅
+<a class="reference internal" href="logging.html#topics-logging-from-spiders"><span class="std std-ref">从Spiders记录</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.Spider.closed">
+<code class="sig-name descname">closed</code><span class="sig-paren">(</span><em class="sig-param">reason</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Spider.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>爬虫关闭时调用。此方法为信号的signals.connect（）提供了快捷方式 <a class="reference internal" href="signals.html#std:signal-spider_closed"><code class="xref std std-signal docutils literal notranslate"><span class="pre">spider_closed</span></code></a> signal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>我们来看一个例子:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;http://www.example.com/1.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/2.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/3.html&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;A response from </span><span class="si">%s</span><span class="s1"> just arrived!&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>从单个回调中返回多个请求和项目:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;http://www.example.com/1.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/2.html&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;http://www.example.com/3.html&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">h3</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//h3&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">h3</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//a/@href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">href</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>除了 <a class="reference internal" href="#scrapy.spiders.Spider.start_urls" title="scrapy.spiders.Spider.start_urls"><code class="xref py py-attr docutils literal notranslate"><span class="pre">start_urls</span></code></a> ，你也可以直接使用 <a class="reference internal" href="#scrapy.spiders.Spider.start_requests" title="scrapy.spiders.Spider.start_requests"><code class="xref py py-meth docutils literal notranslate"><span class="pre">start_requests()</span></code></a> directly;
+您也可以使用 <a class="reference internal" href="items.html#topics-items"><span class="std std-ref">Items</span></a> 来给予数据更多的结构性:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="k">import</span> <span class="n">MyItem</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/1.html&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/2.html&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/3.html&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">h3</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//h3&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">MyItem</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">h3</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">href</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//a/@href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">getall</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">href</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="spider-arguments">
+<span id="spiderargs"></span><h2>Spider arguments<a class="headerlink" href="#spider-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Spider可以通过接受参数来修改其功能。 spider参数一般用来定义初始URL或者指定限制爬取网站的部分。 您也可以使用其来配置spider的任何功能。</p>
+<p>在运行  <a class="reference internal" href="commands.html#std:command-crawl"><code class="xref std std-command docutils literal notranslate"><span class="pre">crawl</span></code></a> 时添加
+<code class="docutils literal notranslate"><span class="pre">-a</span></code> 可以传递Spider参数:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">myspider</span> <span class="o">-</span><span class="n">a</span> <span class="n">category</span><span class="o">=</span><span class="n">electronics</span>
+</pre></div>
+</div>
+<p>Spiders 可以在他们的 <cite>__init__</cite> 方法中访问参数:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MySpider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/categories/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">category</span><span class="p">]</span>
+        <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>默认的 <cite>__init__</cite> 方法将获取任何spider参数，并将它们作为 spider 的属性。上面的例子也可以写成如下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;myspider&#39;</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="s1">&#39;http://www.example.com/categories/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>请记住，蜘蛛参数只能是字符串。蜘蛛自己不会做任何解析。如果要从命令行设置 <cite>start_urls</cite> 属性，则必须使用
+<a class="reference external" href="https://docs.python.org/library/ast.html#ast.literal_eval">ast.literal_eval</a>
+或 <a class="reference external" href="https://docs.python.org/library/json.html#json.loads">json.loads</a> 之类将它解析为列表，并将它设置为属性，然后将其设置为属性。否则，你会导致迭代一个 <cite>start_urls</cite> 字符串（一个非常常见的python陷阱），导致每个字符被看作一个单独的url。</p>
+<p>有效的用例是通过 <a class="reference internal" href="downloader-middleware.html#scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware" title="scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">HttpAuthMiddleware</span></code></a>
+设置 http auth 证书或 通过  <a class="reference internal" href="downloader-middleware.html#scrapy.downloadermiddlewares.useragent.UserAgentMiddleware" title="scrapy.downloadermiddlewares.useragent.UserAgentMiddleware"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserAgentMiddleware</span></code></a> 设置 user agent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">crawl</span> <span class="n">myspider</span> <span class="o">-</span><span class="n">a</span> <span class="n">http_user</span><span class="o">=</span><span class="n">myuser</span> <span class="o">-</span><span class="n">a</span> <span class="n">http_pass</span><span class="o">=</span><span class="n">mypassword</span> <span class="o">-</span><span class="n">a</span> <span class="n">user_agent</span><span class="o">=</span><span class="n">mybot</span>
+</pre></div>
+</div>
+<p>Spider 参数也可以通过 Scrapyd <code class="docutils literal notranslate"><span class="pre">schedule.json</span></code> API 传递。请参阅 <a class="reference external" href="https://scrapyd.readthedocs.io/en/latest/">Scrapyd documentation</a>.</p>
+</div>
+<div class="section" id="generic-spiders">
+<span id="builtin-spiders"></span><h2>Generic Spiders<a class="headerlink" href="#generic-spiders" title="Permalink to this headline">¶</a></h2>
+<p>Scrapy 自带一些有用的通用爬虫，你可以将自己的爬虫作为它们的子类。他们的目的是为一些常见的抓取案例提供方便的功能，例如根据某些规则跟踪网站上的所有链接，从  <a class="reference external" href="https://www.sitemaps.org/index.html">Sitemaps</a> 抓取或解析XML / CSV Feed。</p>
+<p>对于在下面的爬虫中使用的示例，我们假设你有一个项目，在 <code class="docutils literal notranslate"><span class="pre">myproject.items</span></code> 模块中声明一个 <code class="docutils literal notranslate"><span class="pre">TestItem</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+<span class="k">class</span> <span class="nc">TestItem</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="crawlspider">
+<h3>CrawlSpider<a class="headerlink" href="#crawlspider" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.spiders.CrawlSpider">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">CrawlSpider</code><a class="headerlink" href="#scrapy.spiders.CrawlSpider" title="Permalink to this definition">¶</a></dt>
+<dd><p>这是用于抓取常规网站的最常用的蜘蛛，因为它通过定义一组规则为跟踪链接提供了便利的机制。它可能不是最适合您的特定网站或项目，但它在几种情况下足够通用，因此您可以从它开始并根据需要覆盖它以获得更多自定义功能，或者只是实现您自己的蜘蛛。</p>
+<p>除了从Spider继承的属性（您必须指定）之外，此类还支持一个新属性:</p>
+<dl class="attribute">
+<dt id="scrapy.spiders.CrawlSpider.rules">
+<code class="sig-name descname">rules</code><a class="headerlink" href="#scrapy.spiders.CrawlSpider.rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>这是一个（或多个） <a class="reference internal" href="#scrapy.spiders.Rule" title="scrapy.spiders.Rule"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rule</span></code></a> 对象的列表。每个都 <a class="reference internal" href="#scrapy.spiders.Rule" title="scrapy.spiders.Rule"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rule</span></code></a>
+定义了爬网站点的特定行为。规则对象如下所述。如果多个规则匹配相同的链接，则将根据它们在此属性中定义的顺序使用第一个规则。</p>
+</dd></dl>
+
+<p>这个蜘蛛还暴露了一个可重写的方法:</p>
+<dl class="method">
+<dt id="scrapy.spiders.CrawlSpider.parse_start_url">
+<code class="sig-name descname">parse_start_url</code><span class="sig-paren">(</span><em class="sig-param">response</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.CrawlSpider.parse_start_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>为start_urls响应调用此方法。它允许解析初始响应，并且必须返回
+<a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 对象, <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 对象或包含其中任何一个的iterable。</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="crawling-rules">
+<h4>Crawling rules<a class="headerlink" href="#crawling-rules" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="scrapy.spiders.Rule">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">Rule</code><span class="sig-paren">(</span><em class="sig-param">link_extractor</em>, <em class="sig-param">callback=None</em>, <em class="sig-param">cb_kwargs=None</em>, <em class="sig-param">follow=None</em>, <em class="sig-param">process_links=None</em>, <em class="sig-param">process_request=None</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.Rule" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">link_extractor</span></code> 是一个 <a class="reference internal" href="link-extractors.html#topics-link-extractors"><span class="std std-ref">Link Extractor</span></a> 对象，它定义如何从要爬取的页面提取链接。</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>callback``是一个 callable 或 string（在这种情况下，该spider中同名的函数将会被调用），使用 link_extractor 从 Response 对象中提取的每个链接将会调用该函数。该回调接函数收一个 response 作为它的第一个参数，并且必须返回一个包含 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 及（或）
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 对象（或它们的任何子类）的列表。</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>编写爬网蜘蛛规则时，请避免使用 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 回调，因为 <a class="reference internal" href="#scrapy.spiders.CrawlSpider" title="scrapy.spiders.CrawlSpider"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrawlSpider</span></code></a> 使用 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 方法本身来实现其逻辑。因此，如果您覆盖该 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 方法，则怕成将不再起作用。</p>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">cb_kwargs</span></code> 是一个包含要传递给回调函数的关键字参数的dict。</p>
+<p><code class="docutils literal notranslate"><span class="pre">follow</span></code> 是一个布尔值，指定是否应该从使用此规则提取的每个响应中跟踪链接。如果 <code class="docutils literal notranslate"><span class="pre">callback</span></code> 默认值为 None <code class="docutils literal notranslate"><span class="pre">follow</span></code> 则默认为  <code class="docutils literal notranslate"><span class="pre">True</span></code>, 否则默认为 <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">process_links</span></code> 是一个 callable 或 string（在这种情况下，该spider中同名的函数将会被调用），使用 <a href="#id3"><span class="problematic" id="id4">``</span></a>link_extractor``从 Response 对象中提取的每个链接列表调用它。这主要用于过滤目的。</p>
+<p><code class="docutils literal notranslate"><span class="pre">process_request</span></code> 是一个 callable 或 string（在这种情况下，该spider中同名的函数将会被调用），它将被此规则提取的每个 request 调用，并且必须返回一个 request 或None（过滤出 request）。</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id5">
+<h4>CrawlSpider 示例<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>现在让我们来看看一个带有 rule 的 CrawlSpider 示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.spiders</span> <span class="k">import</span> <span class="n">CrawlSpider</span><span class="p">,</span> <span class="n">Rule</span>
+<span class="kn">from</span> <span class="nn">scrapy.linkextractors</span> <span class="k">import</span> <span class="n">LinkExtractor</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CrawlSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com&#39;</span><span class="p">]</span>
+
+    <span class="n">rules</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># Extract links matching &#39;category.php&#39; (but not matching &#39;subsection.php&#39;)</span>
+        <span class="c1"># and follow links from them (since no callback means follow=True by default).</span>
+        <span class="n">Rule</span><span class="p">(</span><span class="n">LinkExtractor</span><span class="p">(</span><span class="n">allow</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;category\.php&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="n">deny</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;subsection\.php&#39;</span><span class="p">,</span> <span class="p">))),</span>
+
+        <span class="c1"># Extract links matching &#39;item.php&#39; and parse them with the spider&#39;s method parse_item</span>
+        <span class="n">Rule</span><span class="p">(</span><span class="n">LinkExtractor</span><span class="p">(</span><span class="n">allow</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;item\.php&#39;</span><span class="p">,</span> <span class="p">)),</span> <span class="n">callback</span><span class="o">=</span><span class="s1">&#39;parse_item&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Hi, this is an item page! </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_id&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">re</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;ID: (\d+)&#39;</span><span class="p">)</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_name&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//td[@id=&quot;item_description&quot;]/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+<p>spider将从example.com的首页开始爬取，获取category以及item的链接并对后者使用  <code class="docutils literal notranslate"><span class="pre">parse_item</span></code> 方法。 当item获得返回(response)时，将使用XPath处理HTML并生成一些数据填入 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 中。</p>
+</div>
+</div>
+<div class="section" id="xmlfeedspider">
+<h3>XMLFeedSpider<a class="headerlink" href="#xmlfeedspider" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.spiders.XMLFeedSpider">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">XMLFeedSpider</code><a class="headerlink" href="#scrapy.spiders.XMLFeedSpider" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>XMLFeedSpider被设计用于通过迭代各个节点来分析XML源(XML feed)。 迭代器可以从: <code class="docutils literal notranslate"><span class="pre">iternodes</span></code>, <code class="docutils literal notranslate"><span class="pre">xml</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">html</span></code>.  选择。 鉴于 <code class="docutils literal notranslate"><span class="pre">xml</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">html</span></code> 迭代器需要先读取所有DOM再分析而引起的性能问题， 一般还是推荐使用 <code class="docutils literal notranslate"><span class="pre">iternodes</span></code>。 不过使用   <a href="#id6"><span class="problematic" id="id7">``</span></a>html``作为迭代器能有效应对错误的XML。</p>
+</div></blockquote>
+<p>您必须定义下列类属性来设置迭代器以及标签名(tag name):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.. attribute:: iterator
+
+   用于确定使用哪个迭代器的string。可选项有:
+
+       - ``&#39;iternodes&#39;`` -  一个高性能的基于正则表达式的迭代器
+
+       - ``&#39;html&#39;`` - 使用 :class:`~scrapy.selector.Selector` 的迭代器。 需要注意的是该迭代器使用DOM进行分析，其需要将所有的DOM载入内存， 当数据量大的时候会产生问题。
+
+       - ``&#39;xml&#39;`` - 使用 :class:`~scrapy.selector.Selector`  的迭代器。 需要注意的是该迭代器使用DOM进行分析，其需要将所有的DOM载入内存， 当数据量大的时候会产生问题。
+
+    默认值为: ``&#39;iternodes&#39;``.
+
+.. attribute:: itertag
+
+    一个包含开始迭代的节点名的string。例如::
+
+        itertag = &#39;product&#39;
+
+.. attribute:: namespaces
+
+    一个由 ``(prefix, uri)`` 一个由 ``prefix`` 和 ``uri``会被自动调用 :meth:`~scrapy.selector.Selector.register_namespace`生成namespace。
+
+    您可以通过在  :attr:`itertag` 属性中制定节点的namespace。
+
+    示例::
+
+        class YourSpider(XMLFeedSpider):
+
+            namespaces = [(&#39;n&#39;, &#39;http://www.sitemaps.org/schemas/sitemap/0.9&#39;)]
+            itertag = &#39;n:url&#39;
+            # ...
+</pre></div>
+</div>
+<p>除了这些新的属性之外，该spider也有以下可以覆盖(overrideable)的方法:</p>
+<blockquote>
+<div><dl class="method">
+<dt id="scrapy.spiders.XMLFeedSpider.adapt_response">
+<code class="sig-name descname">adapt_response</code><span class="sig-paren">(</span><em class="sig-param">response</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.XMLFeedSpider.adapt_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>该方法在spider分析response前被调用。您可以在response被分析之前使用该函数来修改内容(body)。 该方法接受一个response并返回一个response(可以相同也可以不同)。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.XMLFeedSpider.parse_node">
+<code class="sig-name descname">parse_node</code><span class="sig-paren">(</span><em class="sig-param">response</em>, <em class="sig-param">selector</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.XMLFeedSpider.parse_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>当节点符合提供的标签名时
+(<code class="docutils literal notranslate"><span class="pre">itertag</span></code>). 该方法被调用。 接收到的response以及相应的
+<a class="reference internal" href="selectors.html#scrapy.selector.Selector" title="scrapy.selector.Selector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Selector</span></code></a> 作为参数传递给该方法。 该方法返回一个 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 对象或者
+<a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 对象 或者一个包含二者的可迭代对象(iterable)。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.XMLFeedSpider.process_results">
+<code class="sig-name descname">process_results</code><span class="sig-paren">(</span><em class="sig-param">response</em>, <em class="sig-param">results</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.XMLFeedSpider.process_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>当spider返回结果(item或request)时该方法被调用。 设定该方法的目的是在结果返回给框架核心(framework core)之前做最后的处理， 例如设定item的ID。其接受一个结果的列表(list of results)及对应的response。 其结果必须返回一个结果的列表(list of results)(包含Item或者Request对象)。</p>
+</dd></dl>
+
+</div></blockquote>
+</dd></dl>
+
+<div class="section" id="id8">
+<h4>XMLFeedSpider 示例<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>该spider十分易用。下边是其中一个例子:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.spiders</span> <span class="k">import</span> <span class="n">XMLFeedSpider</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="k">import</span> <span class="n">TestItem</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">XMLFeedSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/feed.xml&#39;</span><span class="p">]</span>
+    <span class="n">iterator</span> <span class="o">=</span> <span class="s1">&#39;iternodes&#39;</span>  <span class="c1"># This is actually unnecessary, since it&#39;s the default value</span>
+    <span class="n">itertag</span> <span class="o">=</span> <span class="s1">&#39;item&#39;</span>
+
+    <span class="k">def</span> <span class="nf">parse_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Hi, this is a &lt;</span><span class="si">%s</span><span class="s1">&gt; node!: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">itertag</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">getall</span><span class="p">()))</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TestItem</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;@id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+<p>简单来说，我们在这里创建了一个spider，从给定的 <code class="docutils literal notranslate"><span class="pre">start_urls</span></code>, 中下载feed， 并迭代feed中每个 <code class="docutils literal notranslate"><span class="pre">item</span></code> 标签，输出，并在 <a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 中存储有些随机数据。</p>
+</div>
+</div>
+<div class="section" id="csvfeedspider">
+<h3>CSVFeedSpider<a class="headerlink" href="#csvfeedspider" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.spiders.CSVFeedSpider">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">CSVFeedSpider</code><a class="headerlink" href="#scrapy.spiders.CSVFeedSpider" title="Permalink to this definition">¶</a></dt>
+<dd><p>This spider is very similar to the XMLFeedSpider, except that it iterates
+over rows, instead of nodes. The method that gets called in each iteration
+is <a class="reference internal" href="#scrapy.spiders.CSVFeedSpider.parse_row" title="scrapy.spiders.CSVFeedSpider.parse_row"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_row()</span></code></a>.</p>
+<dl class="attribute">
+<dt id="scrapy.spiders.CSVFeedSpider.delimiter">
+<code class="sig-name descname">delimiter</code><a class="headerlink" href="#scrapy.spiders.CSVFeedSpider.delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string with the separator character for each field in the CSV file
+Defaults to <code class="docutils literal notranslate"><span class="pre">','</span></code> (comma).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.CSVFeedSpider.quotechar">
+<code class="sig-name descname">quotechar</code><a class="headerlink" href="#scrapy.spiders.CSVFeedSpider.quotechar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string with the enclosure character for each field in the CSV file
+Defaults to <code class="docutils literal notranslate"><span class="pre">'&quot;'</span></code> (quotation mark).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.CSVFeedSpider.headers">
+<code class="sig-name descname">headers</code><a class="headerlink" href="#scrapy.spiders.CSVFeedSpider.headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of the column names in the CSV file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.spiders.CSVFeedSpider.parse_row">
+<code class="sig-name descname">parse_row</code><span class="sig-paren">(</span><em class="sig-param">response</em>, <em class="sig-param">row</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.spiders.CSVFeedSpider.parse_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives a response and a dict (representing each row) with a key for each
+provided (or detected) header of the CSV file.  This spider also gives the
+opportunity to override <code class="docutils literal notranslate"><span class="pre">adapt_response</span></code> and <code class="docutils literal notranslate"><span class="pre">process_results</span></code> methods
+for pre- and post-processing purposes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="id9">
+<h4>CSVFeedSpider 示例<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>下面的例子和之前的例子很像，但使用了
+<a class="reference internal" href="#scrapy.spiders.CSVFeedSpider" title="scrapy.spiders.CSVFeedSpider"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVFeedSpider</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy</span> <span class="k">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="k">import</span> <span class="n">CSVFeedSpider</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="k">import</span> <span class="n">TestItem</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">CSVFeedSpider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;example.com&#39;</span>
+    <span class="n">allowed_domains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;example.com&#39;</span><span class="p">]</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/feed.csv&#39;</span><span class="p">]</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="s1">&#39;Hi, this is a row!: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">row</span><span class="p">)</span>
+
+        <span class="n">item</span> <span class="o">=</span> <span class="n">TestItem</span><span class="p">()</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">item</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">item</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="sitemapspider">
+<h3>SitemapSpider<a class="headerlink" href="#sitemapspider" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.spiders.SitemapSpider">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.spiders.</code><code class="sig-name descname">SitemapSpider</code><a class="headerlink" href="#scrapy.spiders.SitemapSpider" title="Permalink to this definition">¶</a></dt>
+<dd><p>SitemapSpider使您爬取网站时可以通过 <a class="reference external" href="https://www.sitemaps.org/index.html">Sitemaps</a> 来发现爬取的URL。</p>
+<p>其支持嵌套的sitemap，并能从 <a class="reference external" href="http://www.robotstxt.org/">robots.txt</a> 中获取sitemap的url。</p>
+<dl class="attribute">
+<dt id="scrapy.spiders.SitemapSpider.sitemap_urls">
+<code class="sig-name descname">sitemap_urls</code><a class="headerlink" href="#scrapy.spiders.SitemapSpider.sitemap_urls" title="Permalink to this definition">¶</a></dt>
+<dd><p>包含您要爬取的url的sitemap的url列表(list)。
+您也可以指定为一个 <a class="reference external" href="http://www.robotstxt.org/">robots.txt</a> ，spider会从中分析并提取url。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.SitemapSpider.sitemap_rules">
+<code class="sig-name descname">sitemap_rules</code><a class="headerlink" href="#scrapy.spiders.SitemapSpider.sitemap_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个包含 <code class="docutils literal notranslate"><span class="pre">(regex,</span> <span class="pre">callback)</span></code> 元组的列表(list):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code> 是一个用于匹配从sitemap提供的url的正则表达式。
+<code class="docutils literal notranslate"><span class="pre">regex</span></code> 可以是一个字符串或者编译的正则对象(compiled regex object)。</p></li>
+<li><p>callback指定了匹配正则表达式的url的处理函数。
+<code class="docutils literal notranslate"><span class="pre">callback</span></code> 可以是一个字符串(spider中方法的名字)或者是callable。</p></li>
+</ul>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sitemap_rules</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;/product/&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_product&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>规则按顺序进行匹配，之后第一个匹配才会被应用。</p>
+<p>如果您忽略该属性，sitemap中发现的所有url将会被 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 函数处理。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.SitemapSpider.sitemap_follow">
+<code class="sig-name descname">sitemap_follow</code><a class="headerlink" href="#scrapy.spiders.SitemapSpider.sitemap_follow" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个用于匹配要跟进的sitemap的正则表达式的列表(list)。其仅仅被应用在
+使用 <cite>Sitemap index files</cite> 来指向其他sitemap文件的站点。</p>
+<p>默认情况下所有的sitemap都会被跟进。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.spiders.SitemapSpider.sitemap_alternate_links">
+<code class="sig-name descname">sitemap_alternate_links</code><a class="headerlink" href="#scrapy.spiders.SitemapSpider.sitemap_alternate_links" title="Permalink to this definition">¶</a></dt>
+<dd><p>指定当一个 <code class="docutils literal notranslate"><span class="pre">url</span></code> 有可选的链接时，是否跟进。
+有些非英文网站会在一个 <code class="docutils literal notranslate"><span class="pre">url</span></code> 块内提供其他语言的网站链接。</p>
+<p>例如:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">url</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">loc</span><span class="o">&gt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/&lt;/</span><span class="n">loc</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">xhtml</span><span class="p">:</span><span class="n">link</span> <span class="n">rel</span><span class="o">=</span><span class="s2">&quot;alternate&quot;</span> <span class="n">hreflang</span><span class="o">=</span><span class="s2">&quot;de&quot;</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;http://example.com/de&quot;</span><span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">url</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>当 <code class="docutils literal notranslate"><span class="pre">sitemap_alternate_links</span></code> 设置时，两个URL都会被获取。
+当 <code class="docutils literal notranslate"><span class="pre">sitemap_alternate_links</span></code> 关闭时，只有 <code class="docutils literal notranslate"><span class="pre">http://example.com/</span></code> 会被获取。</p>
+<p>默认 <code class="docutils literal notranslate"><span class="pre">sitemap_alternate_links</span></code> 关闭。</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="id10">
+<h4>SitemapSpider样例<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p>简单的例子: 使用 <code class="docutils literal notranslate"><span class="pre">parse</span></code> 处理通过sitemap发现的所有url:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="k">import</span> <span class="n">SitemapSpider</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">SitemapSpider</span><span class="p">):</span>
+    <span class="n">sitemap_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/sitemap.xml&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape item here ...</span>
+</pre></div>
+</div>
+<p>用特定的函数处理某些url，其他的使用另外的callback:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="k">import</span> <span class="n">SitemapSpider</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">SitemapSpider</span><span class="p">):</span>
+    <span class="n">sitemap_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/sitemap.xml&#39;</span><span class="p">]</span>
+    <span class="n">sitemap_rules</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;/product/&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_product&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;/category/&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_category&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape product ...</span>
+
+    <span class="k">def</span> <span class="nf">parse_category</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape category ...</span>
+</pre></div>
+</div>
+<p>跟进 <a class="reference external" href="http://www.robotstxt.org/">robots.txt</a> 文件定义的sitemap并只跟进包含有 <code class="docutils literal notranslate"><span class="pre">..sitemap_shop</span></code> 的url:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="k">import</span> <span class="n">SitemapSpider</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">SitemapSpider</span><span class="p">):</span>
+    <span class="n">sitemap_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/robots.txt&#39;</span><span class="p">]</span>
+    <span class="n">sitemap_rules</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;/shop/&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_shop&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">sitemap_follow</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;/sitemap_shops&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse_shop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape shop here ...</span>
+</pre></div>
+</div>
+<p>在SitemapSpider中使用其他url:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.contrib.spiders</span> <span class="k">import</span> <span class="n">SitemapSpider</span>
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">SitemapSpider</span><span class="p">):</span>
+    <span class="n">sitemap_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/robots.txt&#39;</span><span class="p">]</span>
+    <span class="n">sitemap_rules</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;/shop/&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_shop&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">other_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;http://www.example.com/about&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">start_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">requests</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">MySpider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">start_requests</span><span class="p">())</span>
+        <span class="n">requests</span> <span class="o">+=</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_other</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_urls</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">requests</span>
+
+    <span class="k">def</span> <span class="nf">parse_shop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape shop here ...</span>
+
+    <span class="k">def</span> <span class="nf">parse_other</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">pass</span> <span class="c1"># ... scrape other here ...</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="selectors.html" class="btn btn-neutral float-right" title="选择器" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="commands.html" class="btn btn-neutral float-left" title="命令行工具" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

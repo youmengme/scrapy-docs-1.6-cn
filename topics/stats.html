@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>统计收集 &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="发送电子邮件" href="email.html" />
+    <link rel="prev" title="Logging" href="logging.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">统计收集</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#topics-stats-usecases">使用统计信息收集器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">可用的统计数据收集器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#memorystatscollector">MemoryStatsCollector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dummystatscollector">DummyStatsCollector</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>统计收集</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/stats.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="topics-stats">
+<span id="id1"></span><h1>统计收集<a class="headerlink" href="#topics-stats" title="Permalink to this headline">¶</a></h1>
+<p>Scrapy提供了一种方便的工具，用于以键/值的形式收集统计数据，其中值通常是计数器。该工具称为统计收集器，可以通过 <a class="reference internal" href="api.html#topics-api-crawler"><span class="std std-ref">Crawler API</span></a> 的 <a class="reference internal" href="api.html#scrapy.crawler.Crawler.stats" title="scrapy.crawler.Crawler.stats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stats</span></code></a>
+属性进行访问，如下面的 <a class="reference internal" href="#topics-stats-usecases"><span class="std std-ref">使用统计信息收集器</span></a> 使用部分中的示例所示。</p>
+<p>但是，统计信息收集器始终可用，因此无论是否启用统计信息收集，您始终可以将其导入模块并使用其API（增加或设置新的统计信息键）。如果它被禁用，API仍然可以工作，但它不会收集任何东西。这旨在简化统计信息收集器的使用：您应该花费不超过一行代码来收集蜘蛛，Scrapy扩展或您使用统计信息收集器的任何代码中的统计信息。</p>
+<p>统计信息收集器的另一个特性是它非常有效（启用时）并且在禁用时非常有效（几乎不可察觉）。</p>
+<p>统计收集器为每个打开的蜘蛛保留一个统计表，该蜘蛛在蜘蛛打开时自动打开，在蜘蛛关闭时关闭。</p>
+<div class="section" id="topics-stats-usecases">
+<span id="id2"></span><h2>使用统计信息收集器<a class="headerlink" href="#topics-stats-usecases" title="Permalink to this headline">¶</a></h2>
+<p>通过 <a class="reference internal" href="api.html#scrapy.crawler.Crawler.stats" title="scrapy.crawler.Crawler.stats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">stats</span></code></a>
+属性访问统计信息收集器。以下是访问统计信息的扩展示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExtensionThatAccessStats</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">stats</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_crawler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">crawler</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">crawler</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>设置统计值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stats</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s1">&#39;hostname&#39;</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>增量统计值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stats</span><span class="o">.</span><span class="n">inc_value</span><span class="p">(</span><span class="s1">&#39;custom_count&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>仅在大于上一个值时设置统计值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stats</span><span class="o">.</span><span class="n">max_value</span><span class="p">(</span><span class="s1">&#39;max_items_scraped&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>仅在低于上一个值时设置统计值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stats</span><span class="o">.</span><span class="n">min_value</span><span class="p">(</span><span class="s1">&#39;min_free_memory_percent&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>获取统计值:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="s1">&#39;custom_count&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>获取所有统计信息:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+<span class="go">{&#39;custom_count&#39;: 1, &#39;start_time&#39;: datetime.datetime(2009, 7, 14, 21, 47, 28, 977139)}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>可用的统计数据收集器<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>除了基本功能 <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsCollector</span></code> Scrapy还提供其他统计数据收集器，可扩展基本的统计数据收集器。您可以通过该 <a class="reference internal" href="settings.html#std:setting-STATS_CLASS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">STATS_CLASS</span></code></a> 设置选择要使用的统计信息收集器。使用的默认统计信息收集器是 <code class="xref py py-class docutils literal notranslate"><span class="pre">MemoryStatsCollector</span></code>.</p>
+<span class="target" id="module-scrapy.statscollectors"></span><div class="section" id="memorystatscollector">
+<h3>MemoryStatsCollector<a class="headerlink" href="#memorystatscollector" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.statscollectors.MemoryStatsCollector">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.statscollectors.</code><code class="sig-name descname">MemoryStatsCollector</code><a class="headerlink" href="#scrapy.statscollectors.MemoryStatsCollector" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个简单的统计数据收集器，它可以在关闭后保留内存中最后一次抓取（每个蜘蛛）的统计数据。可以通过 <a class="reference internal" href="#scrapy.statscollectors.MemoryStatsCollector.spider_stats" title="scrapy.statscollectors.MemoryStatsCollector.spider_stats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spider_stats</span></code></a> 属性访问统计信息，该属性是由蜘蛛域名键入的dict</p>
+<p>这是Scrapy中使用的默认统计信息收集器。</p>
+<dl class="attribute">
+<dt id="scrapy.statscollectors.MemoryStatsCollector.spider_stats">
+<code class="sig-name descname">spider_stats</code><a class="headerlink" href="#scrapy.statscollectors.MemoryStatsCollector.spider_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>dicts的一个词典（由蜘蛛名称键入），包含每个蜘蛛的最后一次刮擦运行的统计数据。</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="dummystatscollector">
+<h3>DummyStatsCollector<a class="headerlink" href="#dummystatscollector" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="scrapy.statscollectors.DummyStatsCollector">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.statscollectors.</code><code class="sig-name descname">DummyStatsCollector</code><a class="headerlink" href="#scrapy.statscollectors.DummyStatsCollector" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个Stats收集器，除了非常有效之外什么都不做（因为它什么都不做）。可以通过设置设置此统计信息收集器 <a class="reference internal" href="settings.html#std:setting-STATS_CLASS"><code class="xref std std-setting docutils literal notranslate"><span class="pre">STATS_CLASS</span></code></a> ，以禁用统计信息收集以提高性能。但是，与其他Scrapy工作负载（如解析页面）相比，统计信息收集的性能损失通常很小。</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="email.html" class="btn btn-neutral float-right" title="发送电子邮件" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="logging.html" class="btn btn-neutral float-left" title="Logging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+.. _topics-webservice:
+
+===========
+Web 服务
+===========
+
+webservice 已被转移到一个单独的项目中。
+
+它托管在:
+
+    https://github.com/scrapy-plugins/scrapy-jsonrpc

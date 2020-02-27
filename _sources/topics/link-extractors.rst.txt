@@ -1,0 +1,107 @@
+.. _topics-link-extractors:
+
+===============
+链接提取器
+===============
+
+链接提取器是一个对象，其唯一目的是从网页中提取链接 (:class:`scrapy.http.Response` 对象），最终将遵循这些链接。
+
+Scrapy中提供 ``scrapy.linkextractors.LinkExtractor`` ，但您可以通过实现简单的界面来创建自己的自定义链接提取器以满足您的需求。
+
+每个链接提取器唯一的公共方法是 ``extract_links``,
+它接收一个 :class:`~scrapy.http.Response` 对象并返回一个 :class:`scrapy.link.Link` 对象列表。链接提取器应该被实例化一次，并且它们的 ``extract_links`` 方法被调用多次，具有不同的响应以提取要遵循的链接。
+
+链接提取器在 :class:`~scrapy.spiders.CrawlSpider`
+类中使用（在Scrapy中可用），通过一组规则，但您也可以在您的蜘蛛中使用它，即使您没有从
+:class:`~scrapy.spiders.CrawlSpider`继承，因为它的目的非常简单：提取链接。
+
+
+.. _topics-link-extractors-ref:
+
+内置链接提取器参考
+==================================
+
+.. module:: scrapy.linkextractors
+   :synopsis: Link extractors classes
+
+:mod:`scrapy.linkextractors` 模块中提供了与Scrapy捆绑在一起的链接提取器类。
+
+默认链接提取器是 ``LinkExtractor``, 它与
+:class:`~.LxmlLinkExtractor` 相同::
+
+    from scrapy.linkextractors import LinkExtractor
+
+以前的Scrapy版本中曾经有过其他链接提取器类，但现在它们已被弃用。
+
+LxmlLinkExtractor
+-----------------
+
+.. module:: scrapy.linkextractors.lxmlhtml
+   :synopsis: lxml's HTMLParser-based link extractors
+
+
+.. class:: LxmlLinkExtractor(allow=(), deny=(), allow_domains=(), deny_domains=(), deny_extensions=None, restrict_xpaths=(), restrict_css=(), tags=('a', 'area'), attrs=('href',), canonicalize=False, unique=True, process_value=None, strip=True)
+
+    LxmlLinkExtractor是推荐的链接提取器，带有方便的过滤选项。它是使用lxml强大的HTMLParser实现的。
+
+    :param allow: 单个正则表达式（或正则表达式列表），（绝对）URL必须匹配才能被提取。如果没有给出（或为空），它将匹配所有链接。
+    :type allow: 正则表达式（或列表)
+
+    :param deny: 单个正则表达式（或正则表达式列表），（绝对）URL必须匹配才能被排除（即未提取）。它优先于 ``allow`` 参数。如果没有给出（或为空），它将不排除任何链接。
+    :type deny: 正则表达式（或列表)
+
+    :param allow_domains: 单个值或包含域的字符串列表，这些域将被视为用于提取链接
+    :type allow_domains: str 或 list
+
+    :param deny_domains: 单个值或包含域的字符串列表，不会考虑提取链接
+    :type deny_domains: str 或 list
+
+    :param deny_extensions: 包含在提取链接时应忽略的扩展名的单个值或字符串列表。如果没有给出，它将默认为 `scrapy.linkextractors`_ 模块中定义的 ``IGNORED_EXTENSIONS`` 列表.
+    :type deny_extensions: list
+
+    :param restrict_xpaths:  是一个XPath（或XPath列表），它定义响应中应从中提取链接的区域。如果给定，则仅扫描由这些XPath选择的文本以获取链接。见下面的例子。
+    :type restrict_xpaths: str 或 list
+
+    :param restrict_css: CSS选择器（或选择器列表），用于定义响应中应从中提取链接的区域。与 ``restrict_xpaths`` 具有相同的行为。.
+    :type restrict_css: str 或 list
+
+    :param tags: 提取链接时要考虑的标记或标记列表。默认为 ``('a', 'area')``.
+    :type tags: str 或 list
+
+    :param attrs: 查找要提取的链接时应考虑的属性或属性列表（仅适用于tags参数中指定的那些 ``tags``
+        parameter).。默认为 ``('href',)``
+    :type attrs: list
+
+    :param canonicalize: 规范化每个提取的URL（使用
+        w3lib.url.canonicalize_url).默认为 ``False``.
+        请注意，canonicalize_url用于重复检查;它可以更改服务器端可见的URL，因此对于具有规范化和原始URL的请求，响应可能不同。如果您使用LinkExtractor跟踪链接，则保持默认的 ``canonicalize=False`` 更加健壮。
+    :type canonicalize: boolean
+
+    :param unique: 是否应对提取的链接应用重复过滤。
+    :type unique: boolean
+
+    :param process_value: 接收从标签中提取的每个值和扫描的属性的函数，可以修改该值并返回一个值，或者返回 ``None`` 以完全忽略该链接。如果没有给出， ``process_value`` 默认为 ``lambda x: x``.
+
+        .. highlight:: html
+
+        例如，从此代码中提取链接::
+
+            <a href="javascript:goToPage('../other/page.html'); return false">Link text</a>
+
+        .. highlight:: python
+
+        您可以在 ``process_value`` 中使用以下函数::
+
+            def process_value(value):
+                m = re.search("javascript:goToPage\('(.*?)'", value)
+                if m:
+                    return m.group(1)
+
+    :type process_value: callable
+
+    :param strip: 是否从提取的属性中去除空格。根据HTML5标准，必须从 ``<a>``, ``<area>``
+        和许多其他元素的 ``href``  属性， ``<img>``, ``<iframe>``
+        元素等的 ``src``属性中去除前导和尾随空格，因此 LinkExtractor 默认剥离空间字符。设置 ``strip=False`` 将其关闭（例如，如果您从允许前导/尾随空格的元素或属性中提取URL）。
+    :type strip: boolean
+
+.. _scrapy.linkextractors: https://github.com/scrapy/scrapy/blob/master/scrapy/linkextractors/__init__.py

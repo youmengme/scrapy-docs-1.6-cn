@@ -1,0 +1,255 @@
+.. _topics-index:
+
+==============================
+Scrapy 1.6 文档
+==============================
+
+本文档包含您需要了解的有关Scrapy的所有信息。
+
+获取帮助
+============
+
+有麻烦吗？我们想帮忙！
+
+* 试试 :doc:`FAQ <faq>` -- 它有一些常见问题的答案。
+* 寻找具体信息？尝试 :ref:`genindex` 或 :ref:`modindex`。
+* 在 `StackOverflow using the scrapy tag`_ 中询问或搜索问题。
+* 在 `Scrapy subreddit`_ 中询问或搜索问题。
+* 搜索有关 `scrapy-users mailing list`_ 。
+* 在 `#scrapy IRC channel`_,提问
+* 在我们的 `issue tracker`_ 报告BUGS
+
+.. _scrapy-users mailing list: https://groups.google.com/forum/#!forum/scrapy-users
+.. _Scrapy subreddit: https://www.reddit.com/r/scrapy/
+.. _StackOverflow using the scrapy tag: https://stackoverflow.com/tags/scrapy
+.. _#scrapy IRC channel: irc://irc.freenode.net/scrapy
+.. _issue tracker: https://github.com/scrapy/scrapy/issues
+
+
+第一步
+===========
+
+.. toctree::
+   :caption: First steps
+   :hidden:
+
+   intro/overview
+   intro/install
+   intro/tutorial
+   intro/examples
+
+:doc:`intro/overview`
+    了解Scrapy是什么以及它如何帮助您。
+
+:doc:`intro/install`
+    在您的计算机上安装Scrapy。
+
+:doc:`intro/tutorial`
+    写下你的第一个Scrapy项目。
+
+:doc:`intro/examples`
+    Learn more by playing with a pre-made Scrapy project.
+
+.. _section-basics:
+
+基本概念
+==============
+
+.. toctree::
+   :caption: Basic concepts
+   :hidden:
+
+   topics/commands
+   topics/spiders
+   topics/selectors
+   topics/items
+   topics/loaders
+   topics/shell
+   topics/item-pipeline
+   topics/feed-exports
+   topics/request-response
+   topics/link-extractors
+   topics/settings
+   topics/exceptions
+
+
+:doc:`topics/commands`
+    了解用于管理Scrapy项目的命令行工具。
+
+:doc:`topics/spiders`
+    编写规则以对网站进行抓取。
+
+:doc:`topics/selectors`
+    使用xpath从网页中提取数据。
+
+:doc:`topics/shell`
+    在交互式环境中测试提取代码。
+
+:doc:`topics/items`
+    定义要擦除的数据。
+
+:doc:`topics/loaders`
+    使用提取的数据填充项目。
+
+:doc:`topics/item-pipeline`
+    处理并存储您的已删除数据。
+
+:doc:`topics/feed-exports`
+    使用不同的格式和存储输出已删除的数据。
+
+:doc:`topics/request-response`
+    了解用于表示HTTP请求和响应的类。.
+
+:doc:`topics/link-extractors`
+    便捷的从页面中提取链接。
+
+:doc:`topics/settings`
+    了解如何配置Scrapy并查看所有 :ref:`available settings <topics-settings-ref>`.
+
+:doc:`topics/exceptions`
+    查看所有可用的异常及其含义。
+
+
+内置服务
+=================
+
+.. toctree::
+   :caption: Built-in services
+   :hidden:
+
+   topics/logging
+   topics/stats
+   topics/email
+   topics/telnetconsole
+   topics/webservice
+
+:doc:`topics/logging`
+    了解如何在Scrapy上使用Python的内置日志记录。
+
+:doc:`topics/stats`
+    收集有关抓取爬虫的统计信息。
+
+:doc:`topics/email`
+    发生特定事件时发送电子邮件通知。
+
+:doc:`topics/telnetconsole`
+    使用内置的Python控制台检查正在运行的爬虫程序。
+:doc:`topics/webservice`
+    使用Web服务监视和控制爬虫程序。
+
+
+解决具体问题
+=========================
+
+.. toctree::
+   :caption: Solving specific problems
+   :hidden:
+
+   faq
+   topics/debug
+   topics/contracts
+   topics/practices
+   topics/broad-crawls
+   topics/developer-tools
+   topics/leaks
+   topics/media-pipeline
+   topics/deploy
+   topics/autothrottle
+   topics/benchmarking
+   topics/jobs
+
+:doc:`faq`
+    获取最常见问题的答案。
+
+:doc:`topics/debug`
+    了解如何调试scrapy爬虫的常见问题。
+
+:doc:`topics/contracts`
+    了解如何使用合同来测试爬虫。
+
+:doc:`topics/practices`
+    熟悉一些Scrapy的常见做法。
+
+:doc:`topics/broad-crawls`
+    调整Scrapy以并行地爬取大量域名。
+
+:doc:`topics/developer-tools`
+    了解如何使用浏览器的开发人员工具。
+
+:doc:`topics/leaks`
+    了解如何查找和清除爬虫程序中的内存泄漏。
+
+:doc:`topics/media-pipeline`
+    下载与已删除项目关联的文件和/或图像。
+
+:doc:`topics/deploy`
+    部署Scrapy蜘蛛并在远程服务器中运行它们。
+
+:doc:`topics/autothrottle`
+    根据负载动态调整爬行速率。
+
+:doc:`topics/benchmarking`
+    检查Scrapy在硬件上的性能。
+
+:doc:`topics/jobs`
+    学习如何暂停和恢复大型爬虫的爬行。
+
+.. _extending-scrapy:
+
+扩展 Scrapy 
+================
+
+.. toctree::
+   :caption: Extending Scrapy
+   :hidden:
+
+   topics/architecture
+   topics/downloader-middleware
+   topics/spider-middleware
+   topics/extensions
+   topics/api
+   topics/signals
+   topics/exporters
+
+
+:doc:`topics/architecture`
+    了解Scrapy架构。
+
+:doc:`topics/downloader-middleware`
+    自定义页面的请求和下载方式。
+
+:doc:`topics/spider-middleware`
+    自定义爬虫的输入和输出。
+
+:doc:`topics/extensions`
+    使用您的自定义功能扩展Scrapy
+
+:doc:`topics/api`
+    在扩展和中间件上使用它来扩展Scrapy功能
+
+:doc:`topics/signals`
+    查看所有可用信号以及如何使用它们。
+
+:doc:`topics/exporters`
+    快速将已删除的项目导出到文件（XML，CSV等）。
+
+
+其余的内容
+============
+
+.. toctree::
+   :caption: All the rest
+   :hidden:
+
+   news
+   contributing
+   versioning
+
+:doc:`news`
+    查看最近Scrapy版本中的变化。
+
+:doc:`contributing`
+    了解如何为Scrapy项目做出贡献。
+
+:doc:`versioning`
+    了解Scrapy版本控制和API稳定性。

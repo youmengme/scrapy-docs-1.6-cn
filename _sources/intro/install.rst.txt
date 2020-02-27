@@ -1,0 +1,243 @@
+.. _intro-install:
+
+==================
+安装指南
+==================
+
+安装Scrapy
+=================
+
+Scrapy在CPython（默认Python实现）和PyPy（从PyPy 5.9开始）下运行于Python 2.7和Python 3.4或更高版本。
+
+如果您使用的是 `Anaconda`_ 或 `Miniconda`_, 则可以从 `conda-forge`_ 通道安装该软件包，该软件包具有适用于Linux，Windows和OS X的最新软件包。
+
+要使用 `conda`` 安装Scrapy，请运行::
+
+  conda install -c conda-forge scrapy
+
+或者，如果您已经熟悉Python包的安装，则可以使用以下命令从PyPI安装Scrapy及其依赖项::
+
+    pip install Scrapy
+
+请注意，有时这可能需要根据您的操作系统解决某些Scrapy依赖项的编译问题，因此请务必查看
+:ref:`intro-install-platform-notes`.
+
+我们强烈建议您在 :ref:`virtualenv <intro-using-virtualenv>`,
+安装Scrapy ，以避免与系统软件包冲突。
+
+有关更详细和平台详细说明以及故障排除信息，请继续阅读。
+
+
+这些事情是有必要知道的
+----------------------------
+
+Scrapy是用纯Python编写的，取决于一些关键的Python包（以及其他）:
+
+* `lxml`_, 一个高效的XML和HTML解析器
+* `parsel`_,  一个基于 lxml 的 HTML / XML 数据提取库
+* `w3lib`_, 一个用于处理URL和网页编码的多用途助手
+* `twisted`_, 一个异步的网络框架
+* `cryptography`_ 和 `pyOpenSSL`_, 以处理各种网络级安全需求
+
+Scrapy 经过测试支持的最低版本为:
+
+* Twisted 14.0
+* lxml 3.4
+* pyOpenSSL 0.14
+
+Scrapy 可能使用这些软件包的旧版本，但不能保证它将继续工作，因为它没有针对他们进行测试。
+
+其中一些包本身依赖于非Python包，根据您的平台，这些包可能需要额外的安装步骤。请检查下面的 :ref:` 平台安装指南 <intro-install-platform-notes>`.
+
+如果出现任何与这些依赖关系有关的问题，请参阅其各自的安装说明:
+
+* `lxml installation`_
+* `cryptography installation`_
+
+.. _lxml installation: http://lxml.de/installation.html
+.. _cryptography installation: https://cryptography.io/en/latest/installation/
+
+
+.. _intro-using-virtualenv:
+
+使用虚拟环境（推荐）
+-----------------------------------------
+
+TL;DR: 我们建议在所有平台上的虚拟环境中安装Scrapy。
+
+python包可以在全局（也就是系统范围）或用户空间中安装。我们不建议在系统范围内安装Scrapy。
+
+相反，我们建议您在所谓的“虚拟环境” (`virtualenv`_).
+中安装scrapy 。Virtualenvs允许您不与已安装的Python系统包冲突（这可能会破坏您的一些系统工具和脚本），并且仍然通常使用 ``pip`` (没有 ``sudo`` 等) 安装包.
+
+要开始使用虚拟环境，请参阅 `virtualenv installation instructions`_.
+要全局安装它（全局安装实际上有帮助在这里），它应该是一个运行的问题::
+
+    $ [sudo] pip install virtualenv
+
+查看此 `user guide`_ 了解如何创建virtualenv。
+
+.. note::
+    如果您使用Linux或OS X, `virtualenvwrapper`_ i是一个创建virtualenvs的便利工具。
+
+O一旦您创建了一个 virtualenv ，您可以里面用 ``pip``,
+安装 scrapy ，就像任何其他的Python包。（请参阅下面的 :ref:`平台安装指南 <intro-install-platform-notes>`
+来安装您需要安装非 Python 依赖).
+
+可以创建 Python virtualenvs 以默认使用 Python 2，或者默认使用 Python 3。
+
+* 如果您想用Python 3安装scrapy，在Python 3 virtualenv中安装scrapy。
+* A如果您想用Python 2安装scrapy，在Python 2 virtualenv中安装scrapy。
+
+.. _virtualenv: https://virtualenv.pypa.io
+.. _virtualenv installation instructions: https://virtualenv.pypa.io/en/stable/installation/
+.. _virtualenvwrapper: https://virtualenvwrapper.readthedocs.io/en/latest/install.html
+.. _user guide: https://virtualenv.pypa.io/en/stable/userguide/
+
+
+.. _intro-install-platform-notes:
+
+平台安装指南
+====================================
+
+.. _intro-install-windows:
+
+Windows
+-------
+
+虽然可以使用pip在Windows上安装Scrapy，但我们建议您安装 `Anaconda`_ 或 `Miniconda`_ 并使用
+`conda-forge`_ 通道中的软件包 ，这样可以避免大多数安装问题。
+
+安装 `Anaconda`_ 或 `Miniconda`_, 安装 Scrapy::
+
+  conda install -c conda-forge scrapy
+
+
+.. _intro-install-ubuntu:
+
+Ubuntu 14.04 或以上
+---------------------
+
+Scrapy目前使用最新版本的lxml，twisted和pyOpenSSL进行了测试，并且与最近的Ubuntu发行版兼容。但它也应该支持旧版本的Ubuntu，比如Ubuntu 14.04，尽管可能存在TLS连接问题。
+
+**不要**使用Ubuntu 提供的 ``python-scrapy`` 软件包，它们通常太旧，并且很慢以赶上最新的 Scrapy 。
+
+要在 Ubuntu（或基于 Ubuntu 的）系统上安装 scrapy ，您需要安装这些依赖关系::
+
+    sudo apt-get install python-dev python-pip libxml2-dev libxslt1-dev zlib1g-dev libffi-dev libssl-dev
+
+- ``python-dev``, ``zlib1g-dev``, ``libxml2-dev`` 和 ``libxslt1-dev`` 是 ``lxml`` 的依赖
+- ``libssl-dev`` 和 ``libffi-dev`` 是 ``cryptography`` 的依赖
+
+如果你想在Python 3上安装scrapy，你还需要Python 3开发文件::
+
+    sudo apt-get install python3 python3-dev
+
+在 :ref:`virtualenv <intro-using-virtualenv>` 中,
+您可以在安装完上面的依赖后使用 ``pip``  安装Scrapy::
+
+    pip install scrapy
+
+.. note::
+    可以使用相同的非Python依赖项在Debian Jessie（8.0）及更高版本中安装Scrapy。
+
+
+.. _intro-install-macos:
+
+Mac OS X
+--------
+
+构建 Scrapy 的依赖需要一个C编译器和开 发头文件。在OS X 上，这通常由苹果的 Xcode 开发工具提供。要安装 Xcode 命令行工具打开终端窗口并运行::
+
+    xcode-select --install
+
+有一个 `已知问题 <https://github.com/pypa/pip/issues/2468>`_ 阻止 ``pip`` 更新系统包。这必须解决成功安装 Scrapy 及其依赖项。这里有一些建议的解决方案:
+
+* *（推荐）* **不要**使用系统 python ，安装一个新的，与系统的其余部分不冲突的更新版本。下面是如何使用 `homebrew`_ 包管理器:
+
+  *  按照 https://brew.sh/ 中的说明安装 `homebrew`_
+
+  * 更新您的 ``PATH`` 变量以声明在系统包之前应使用 homebrew 包 (如果使用 `zsh`_ 作为默认 shell，请将 ``.bashrc`` 更改为 ``.zshrc``)::
+
+      echo "export PATH=/usr/local/bin:/usr/local/sbin:$PATH" >> ~/.bashrc
+
+  * 重新加载 ``.bashrc`` 以确保发生了变化::
+
+      source ~/.bashrc
+
+  * 安装python::
+
+      brew install python
+
+  * 最新版本的 python 有 ``pip`` 与他们捆绑，所以您不需要单独安装。如果不是这样，升级 python::
+
+      brew update; brew upgrade python
+
+* 可选）在独立的 python 环境中安装 Scrapy。
+
+  此方法是上述 OS X 问题的解决方法，但它是管理依赖性的一个总体好的做法，可以补充第一种方法。
+
+  `virtualenv`_ 是一个可以用来在 python 中创建虚拟环境的工具。我们建议阅读一个教程，如
+  http://docs.python-guide.org/en/latest/dev/virtualenvs/ 以便开始使用。
+
+解决完上面的问题，接下来安装 Scrapy::
+
+  pip install Scrapy
+
+
+PyPy
+----
+
+我们建议使用最新的PyPy版本。测试的版本是5.9.0。对于PyPy3，仅测试了Linux安装
+
+大多数scrapy依赖于现有CPython二进制推动, 但不适用于PyPy.
+这意味着将在安装期间构建这些依赖项。在OS X上，您可能会遇到构建加密依赖关系的问题，
+`此处 <https://github.com/pyca/cryptography/issues/2692#issuecomment-272773481>`_,
+描述了此问题的解决方案 ，即导出``brew install openssl``此命令建议的标志（仅在安装scrapy时需要）。除了安装构建依赖项之外，在Linux上安装没有特殊问题。在Windows上使用PyPy安装scrapy未经过测试。
+
+您可以通过运行 ``scrapy bench`` 来检查Scrapy是否安装正确.
+如果此命令给出错误，如
+``TypeError: ... got 2 unexpected keyword arguments``, 这意味着安装工具无法获取一个Pypy特定的依赖项。要解决此问题，请运行 ``pip install 'PyPyDispatcher>=2.1.0'``.
+
+
+.. _intro-install-troubleshooting:
+
+故障排除
+===============
+
+AttributeError: 'module' object has no attribute 'OP_NO_TLSv1_1'
+----------------------------------------------------------------
+
+安装或升级Scrapy，Twisted或pyOpenSSL后，您可能会遇到以下回溯的异常::
+
+    […]
+      File "[…]/site-packages/twisted/protocols/tls.py", line 63, in <module>
+        from twisted.internet._sslverify import _setAcceptableProtocols
+      File "[…]/site-packages/twisted/internet/_sslverify.py", line 38, in <module>
+        TLSVersion.TLSv1_1: SSL.OP_NO_TLSv1_1,
+    AttributeError: 'module' object has no attribute 'OP_NO_TLSv1_1'
+
+您遇到此异常的原因是您的系统或虚拟环境具有您的Twisted版本不支持的pyOpenSSL版本。
+
+要安装您的Twisted版本支持的pyOpenSSL版本，请使用 :code:`tls` 额外选项重新安装Twisted::
+
+    pip install twisted[tls]
+
+有关详细信息，请参阅 `问题 #2473 <https://github.com/scrapy/scrapy/issues/2473>`_.
+
+.. _Python: https://www.python.org/
+.. _pip: https://pip.pypa.io/en/latest/installing/
+.. _lxml: http://lxml.de/
+.. _parsel: https://pypi.python.org/pypi/parsel
+.. _w3lib: https://pypi.python.org/pypi/w3lib
+.. _twisted: https://twistedmatrix.com/
+.. _cryptography: https://cryptography.io/
+.. _pyOpenSSL: https://pypi.python.org/pypi/pyOpenSSL
+.. _setuptools: https://pypi.python.org/pypi/setuptools
+.. _AUR Scrapy package: https://aur.archlinux.org/packages/scrapy/
+.. _homebrew: https://brew.sh/
+.. _zsh: https://www.zsh.org/
+.. _Scrapinghub: https://scrapinghub.com
+.. _Anaconda: https://docs.anaconda.com/anaconda/
+.. _Miniconda: https://conda.io/docs/user-guide/install/index.html
+.. _conda-forge: https://conda-forge.org/

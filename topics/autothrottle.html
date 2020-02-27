@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>AutoThrottle 扩展 &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Benchmarking" href="benchmarking.html" />
+    <link rel="prev" title="Deploying Spiders" href="deploy.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AutoThrottle 扩展</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">设计目标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autothrottle-algorithm">它是如何工作的</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">节流算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">设置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#autothrottle-enabled">AUTOTHROTTLE_ENABLED</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autothrottle-start-delay">AUTOTHROTTLE_START_DELAY</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autothrottle-max-delay">AUTOTHROTTLE_MAX_DELAY</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autothrottle-target-concurrency">AUTOTHROTTLE_TARGET_CONCURRENCY</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autothrottle-debug">AUTOTHROTTLE_DEBUG</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>AutoThrottle 扩展</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/autothrottle.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="autothrottle">
+<span id="topics-autothrottle"></span><h1>AutoThrottle 扩展<a class="headerlink" href="#autothrottle" title="Permalink to this headline">¶</a></h1>
+<p>这是基于Scrapy服务器和您正在抓取的网站的负载自动限制爬网速度的扩展。</p>
+<div class="section" id="id1">
+<h2>设计目标<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>更好的网站，而不是默认下载延迟为零</p></li>
+<li><p>自动将scrapy调整到最佳爬行速度，因此用户无需调整下载延迟以找到最佳延迟。用户只需要指定它允许的最大并发请求，扩展完成剩下的工作。</p></li>
+</ol>
+</div>
+<div class="section" id="autothrottle-algorithm">
+<span id="id2"></span><h2>它是如何工作的<a class="headerlink" href="#autothrottle-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>AutoThrottle扩展动态调整下载延迟，使爬虫
+<a class="reference internal" href="#std:setting-AUTOTHROTTLE_TARGET_CONCURRENCY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code></a> c平均向每个远程网站发送 并发请求。</p>
+<p>它使用下载延迟来计算延迟。其主要思想是：如果一台服务器需要 <code class="docutils literal notranslate"><span class="pre">latency</span></code> 秒钟响应，客户端应该发送一个请求的每个 <code class="docutils literal notranslate"><span class="pre">latency/N</span></code> 秒，具有 <code class="docutils literal notranslate"><span class="pre">N</span></code> 并行处理的请求。</p>
+<p>可以设置一个小的固定下载延迟，并使用
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_DOMAIN"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_DOMAIN</span></code></a> 或
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_IP"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_IP</span></code></a> 选项对并发性施加硬限制，而不是调整延迟 。它会提供类似的效果，但有一些重要的区别：</p>
+<ul class="simple">
+<li><p>因为下载延迟很小，偶尔会有突发的请求;</p></li>
+<li><p>因为下载延迟很小，偶尔会有突发的请求;</p></li>
+</ul>
+<p>AutoThrottle没有这些问题。</p>
+</div>
+<div class="section" id="id3">
+<h2>节流算法<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>AutoThrottle算法根据以下规则调整下载延迟：</p>
+<ol class="arabic simple">
+<li><p>爬虫总是以下载延迟开始
+<a class="reference internal" href="#std:setting-AUTOTHROTTLE_START_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_START_DELAY</span></code></a>;</p></li>
+<li><p>当收到响应时，目标下载延迟计算为
+<code class="docutils literal notranslate"><span class="pre">latency</span> <span class="pre">/</span> <span class="pre">N</span></code> 其中 <code class="docutils literal notranslate"><span class="pre">latency</span></code> 是响应的延迟,
+而 <code class="docutils literal notranslate"><span class="pre">N</span></code> 是 <a class="reference internal" href="#std:setting-AUTOTHROTTLE_TARGET_CONCURRENCY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code></a>.</p></li>
+<li><p>下一个请求的下载延迟设置为先前下载延迟和目标下载延迟的平均值;</p></li>
+<li><p>非200响应的延迟不允许减少延迟;</p></li>
+<li><p>下载延迟不能小于 <a class="reference internal" href="settings.html#std:setting-DOWNLOAD_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DOWNLOAD_DELAY</span></code></a> 或大于
+<a class="reference internal" href="#std:setting-AUTOTHROTTLE_MAX_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_MAX_DELAY</span></code></a></p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>AutoThrottle扩展程序遵循标准的Scrapy设置以实现并发和延迟。这意味着它将尊重
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_DOMAIN"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_DOMAIN</span></code></a> 和
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_IP"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_IP</span></code></a> 选择，并且永远不会将下载延迟设置为低于 <a class="reference internal" href="settings.html#std:setting-DOWNLOAD_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DOWNLOAD_DELAY</span></code></a>.</p>
+</div>
+<p id="download-latency">在Scrapy中，下载延迟测量为建立TCP连接和接收HTTP标头之间经过的时间。</p>
+<p>请注意，在协作式多任务处理环境中，这些延迟很难准确测量，因为Scrapy可能正忙于处理蜘蛛回调，例如，无法参加下载。但是，这些延迟仍然可以合理估计Scrapy（最终是服务器）的繁忙程度，并且此扩展基于该前提。</p>
+</div>
+<div class="section" id="id4">
+<h2>设置<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>用于控制AutoThrottle扩展的设置包括：</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#std:setting-AUTOTHROTTLE_ENABLED"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_ENABLED</span></code></a></p></li>
+<li><p><a class="reference internal" href="#std:setting-AUTOTHROTTLE_START_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_START_DELAY</span></code></a></p></li>
+<li><p><a class="reference internal" href="#std:setting-AUTOTHROTTLE_MAX_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_MAX_DELAY</span></code></a></p></li>
+<li><p><a class="reference internal" href="#std:setting-AUTOTHROTTLE_TARGET_CONCURRENCY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code></a></p></li>
+<li><p><a class="reference internal" href="#std:setting-AUTOTHROTTLE_DEBUG"><code class="xref std std-setting docutils literal notranslate"><span class="pre">AUTOTHROTTLE_DEBUG</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_DOMAIN"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_DOMAIN</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_IP"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_IP</span></code></a></p></li>
+<li><p><a class="reference internal" href="settings.html#std:setting-DOWNLOAD_DELAY"><code class="xref std std-setting docutils literal notranslate"><span class="pre">DOWNLOAD_DELAY</span></code></a></p></li>
+</ul>
+<p>有关更多信息，请参阅 <a class="reference internal" href="#autothrottle-algorithm"><span class="std std-ref">它是如何工作的</span></a>.</p>
+<div class="section" id="autothrottle-enabled">
+<span id="std:setting-AUTOTHROTTLE_ENABLED"></span><h3>AUTOTHROTTLE_ENABLED<a class="headerlink" href="#autothrottle-enabled" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+<p>启用AutoThrottle扩展。</p>
+</div>
+<div class="section" id="autothrottle-start-delay">
+<span id="std:setting-AUTOTHROTTLE_START_DELAY"></span><h3>AUTOTHROTTLE_START_DELAY<a class="headerlink" href="#autothrottle-start-delay" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">5.0</span></code></p>
+<p>初始下载延迟（以秒为单位）。</p>
+</div>
+<div class="section" id="autothrottle-max-delay">
+<span id="std:setting-AUTOTHROTTLE_MAX_DELAY"></span><h3>AUTOTHROTTLE_MAX_DELAY<a class="headerlink" href="#autothrottle-max-delay" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">60.0</span></code></p>
+<p>在高延迟的情况下要设置的最大下载延迟（以秒为单位）。</p>
+</div>
+<div class="section" id="autothrottle-target-concurrency">
+<span id="std:setting-AUTOTHROTTLE_TARGET_CONCURRENCY"></span><h3>AUTOTHROTTLE_TARGET_CONCURRENCY<a class="headerlink" href="#autothrottle-target-concurrency" title="Permalink to this headline">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.1.</span></p>
+</div>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">1.0</span></code></p>
+<p>Scrapy应与远程网站并行发送的平均请求数。</p>
+<p>默认情况下，AutoThrottle会调整延迟以向每个远程网站发送单个并发请求。将此选项设置为更高的值（例如 <code class="docutils literal notranslate"><span class="pre">2.0</span></code>) ）以增加远程服务器上的吞吐量和负载。较低的 <code class="docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code> 值
+(例如 <code class="docutils literal notranslate"><span class="pre">0.5</span></code>) 使得爬虫更加保守和礼貌。</p>
+<p>请注意， <a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_DOMAIN"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_DOMAIN</span></code></a>
+and <a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_IP"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_IP</span></code></a> 在启用 AutoThrottle 扩展选项仍然尊重。这意味着如果
+<code class="docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code> 设置为高于
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_DOMAIN"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_DOMAIN</span></code></a> 或
+<a class="reference internal" href="settings.html#std:setting-CONCURRENT_REQUESTS_PER_IP"><code class="xref std std-setting docutils literal notranslate"><span class="pre">CONCURRENT_REQUESTS_PER_IP</span></code></a> 的值 ，则爬网程序将不会达到此并发请求数。</p>
+<p>在每个给定的时间点，Scrapy可以发送或多或少的并发请求 <code class="docutils literal notranslate"><span class="pre">AUTOTHROTTLE_TARGET_CONCURRENCY</span></code>; 它是爬虫尝试接近的建议值，而不是硬限制。</p>
+</div>
+<div class="section" id="autothrottle-debug">
+<span id="std:setting-AUTOTHROTTLE_DEBUG"></span><h3>AUTOTHROTTLE_DEBUG<a class="headerlink" href="#autothrottle-debug" title="Permalink to this headline">¶</a></h3>
+<p>默认: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+<p>启用AutoThrottle调试模式，该模式将显示收到的每个响应的统计信息，以便您可以查看如何实时调整限制参数。</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="benchmarking.html" class="btn btn-neutral float-right" title="Benchmarking" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="deploy.html" class="btn btn-neutral float-left" title="Deploying Spiders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

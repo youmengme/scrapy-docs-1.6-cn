@@ -1,0 +1,449 @@
+.. _topics-media-pipeline:
+
+===========================================
+下载和处理文件与图像
+===========================================
+
+.. currentmodule:: scrapy.pipelines.images
+
+Scrapy提供可重复使用的 :doc:`item pipelines </topics/item-pipeline>` 用于下载附加到特定项目的文件（例如，当您刮取产品并且还想在本地下载其图像时）。这些管道共享一些功能和结构（我们将它们称为媒体管道），但通常您将使用文件管道或图像管道。
+
+两个管道都实现了这些功能:
+
+* 避免重新下载最近下载的媒体
+* 指定存储介质的位置（文件系统目录，Amazon S3存储空间，Google云端存储存储空间）
+
+图像管道具有一些用于处理图像的额外功能:
+
+* 将所有下载的图像转换为通用格式（JPG）和模式（RGB）
+* 缩略图生成
+* 检查图像宽度/高度以确保它们符合最小约束
+
+管道还保留当前正在计划下载的那些媒体URL的内部队列，并将那些到达包含相同媒体的响应连接到该队列。这样可以避免在多个项目共享时多次下载相同的媒体。
+
+使用文件管道（Files Pipeline）
+========================
+
+使用时的典型工作流程F :class:`FilesPipeline` 如下:
+
+1. 在Spider中，您抓取一个项目并将所需的URL放入一个 ``file_urls`` 字段中。
+
+2. 该项目从Spider返回并转到item pipeline.
+
+3. 当项目到达时 :class:`FilesPipeline` 时, ``file_urls`` 使用标准Scrapy调度程序和下载程序（这意味着重新使用调度程序和下载程序中间件）计划下载字段中的URL ，但具有更高优先级，在其他页面被删除之前处理它们。该项目在该特定管道阶段保持“锁定”，直到文件完成下载（或由于某种原因失败）。
+
+4. 下载文件时，将用结果填充另一个字段 (``files``) 此字段将包含包含有关下载文件的信息的dict列表，例如下载的路径、原始的已擦除URL (从 ``file_urls`` 字段获取) 和文件校验, and the file checksum.
+   The files in the list of the ``files`` f字段列表中的文件将保留原始 ``file_urls`` 字段的相同顺序。如果某些文件下载失败，将记录错误，该文件将不会出现在该 ``files`` 字段中.
+
+
+使用图像管道（Images Pipeline）
+=========================
+
+使用 :class:`ImagesPipeline` 很像使用 :class:`FilesPipeline`,
+除了使用的默认字段名称不同：您使用 ``image_urls`` 目的图像URL，它将填充一个 ``images`` 字段以获取有关下载图像的信息。
+
+将 :class:`ImagesPipeline` 用于图像文件的优点是，您可以配置一些额外的功能，如生成缩略图和根据图像大小过滤图像。
+
+Images Pipeline 使用 `Pillow`_ 进行缩略图并将图像标准化为JPEG / RGB格式，因此您需要安装此库才能使用它。
+`Python Imaging Library`_ (PIL) 在大多数情况下也应该可以工作，但是已知它会在某些设置中引起麻烦，因此我们建议使用 `Pillow`_ 而不是
+PIL.
+
+.. _Pillow: https://github.com/python-pillow/Pillow
+.. _Python Imaging Library: http://www.pythonware.com/products/pil/
+
+
+.. _topics-media-pipeline-enabling:
+
+启用媒体管道（Media Pipeline）
+============================
+
+.. setting:: IMAGES_STORE
+.. setting:: FILES_STORE
+
+要启用媒体管道，必须先将其添加到项目
+:setting:`ITEM_PIPELINES` 设置中
+
+对于图像管道，请使用::
+
+    ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
+
+For Files Pipeline, use::
+
+    ITEM_PIPELINES = {'scrapy.pipelines.files.FilesPipeline': 1}
+
+
+.. note::
+    您也可以同时使用“文件”和“图像管道”。
+
+
+然后，将目标存储设置配置为将用于存储下载的图像的有效值。否则，即使您将管道包含 :setting:`ITEM_PIPELINES` 设置中，管道也将保持禁用状态。
+
+对于“文件管道”，请设置 :setting:`FILES_STORE` 以下::
+
+   FILES_STORE = '/path/to/valid/dir'
+
+对于图像管道，请设置 :setting:`IMAGES_STORE` 以下::
+
+   IMAGES_STORE = '/path/to/valid/dir'
+
+支持的存储
+=================
+
+文件系统是目前唯一官方支持的存储，但也支持在 `Amazon S3`_ 和`Google Cloud Storage`_.
+
+.. _Amazon S3: https://aws.amazon.com/s3/
+.. _Google Cloud Storage: https://cloud.google.com/storage/
+
+文件系统存储
+-------------------
+
+这些文件使用其URL 的 `SHA1 hash`_ 存储为文件名.
+
+例如，以下图片网址::
+
+    http://www.example.com/image.jpg
+
+其 `SHA1 hash` 是::
+
+    3afec3b4765f8f0a07b78f98c07b83f013567a0a
+
+将被下载并存储在以下文件中::
+
+   <IMAGES_STORE>/full/3afec3b4765f8f0a07b78f98c07b83f013567a0a.jpg
+
+其中:
+
+* ``<IMAGES_STORE>`` 是定义在 :setting:`IMAGES_STORE` 设置里的文件夹.
+
+* ``full`` 是用来区分图片和缩略图（如果使用的话）的一个子文件夹。详情参见 :ref:`topics-images-thumbnails`.
+
+Amazon S3 存储
+-----------------
+
+.. setting:: FILES_STORE_S3_ACL
+.. setting:: IMAGES_STORE_S3_ACL
+
+:setting:`FILES_STORE` 和 :setting:`IMAGES_STORE` 表示 Amazon S3
+存储. Scrapy会自动将文件上传到存储空间。
+
+例如，这是有效的 :setting:`IMAGES_STORE` 值::
+
+    IMAGES_STORE = 's3://bucket/images'
+
+您可以修改用于存储文件的访问控制列表（ACL）策略，该策略由 :setting:`FILES_STORE_S3_ACL` 和
+:setting:`IMAGES_STORE_S3_ACL` 设置定义。默认情况下，ACL设置为
+``private``. 要使文件公开可用，请使用以下 ``public-read``
+策略::
+
+    IMAGES_STORE_S3_ACL = 'public-read'
+
+有关更多信息，请参阅Amazon S3开发人员指南中的 `canned ACLs`_ .
+
+因为Scrapy在内部使用 ``boto`` / ``botocore`` ，所以您也可以使用其他类似S3的存储。储存像自托管 `Minio`_ 或 `s3.scality`_. 您需要做的就是在Scrapy设置中设置端点选项::
+
+    AWS_ENDPOINT_URL = 'http://minio.example.com:9000'
+
+对于自托管，您也可能感觉不需要使用SSL而不是验证SSL连接::
+
+    AWS_USE_SSL = False # or True (None by default)
+    AWS_VERIFY = False # or True (None by default)
+
+.. _Minio: https://github.com/minio/minio
+.. _s3.scality: https://s3.scality.com/
+.. _canned ACLs: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
+
+Google Cloud 存储
+---------------------
+
+.. setting:: GCS_PROJECT_ID
+.. setting:: FILES_STORE_GCS_ACL
+.. setting:: IMAGES_STORE_GCS_ACL
+
+:setting:`FILES_STORE` 和 :setting:`IMAGES_STORE` 可以代表Google云端存储分区。
+Scrapy会自动将文件上传到存储空间。（需要 `google-cloud-storage`_ )
+
+.. _google-cloud-storage: https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-python
+
+例如，这些是有效的 :setting:`IMAGES_STORE` 和 :setting:`GCS_PROJECT_ID` 设置::
+
+    IMAGES_STORE = 'gs://bucket/images/'
+    GCS_PROJECT_ID = 'project_id'
+
+有关身份验证的信息，请参阅此 `文档`_.
+
+.. _文档: https://cloud.google.com/docs/authentication/production
+
+您可以修改用于存储文件的访问控制列表（ACL）策略，该策略由 :setting:`FILES_STORE_GCS_ACL` 和
+:setting:`IMAGES_STORE_GCS_ACL` s设置定义。默认情况下，ACL设置为
+``''`` （空字符串），这意味着云存储将桶的默认对象ACL应用于对象。要使文件公开可用，请使用以下 ``publicRead``
+策略::
+
+    IMAGES_STORE_GCS_ACL = 'publicRead'
+
+For more information, see `Predefined ACLs`_ in the Google Cloud Platform Developer Guide.
+
+.. _Predefined ACLs: https://cloud.google.com/storage/docs/access-control/lists#predefined-acl
+
+用法示例
+=============
+
+.. setting:: FILES_URLS_FIELD
+.. setting:: FILES_RESULT_FIELD
+.. setting:: IMAGES_URLS_FIELD
+.. setting:: IMAGES_RESULT_FIELD
+
+要首先使用媒体管道，请 :ref:`请启用它
+<topics-media-pipeline-enabling>`.
+
+然后，如果Spider返回带有URL键的dict (``file_urls`` 或
+``image_urls``, 分别对于文件或图像管道), 则管道将把结果放在相应的键 (``files`` 或 ``images``).
+
+如果您更喜欢使用 :class:`~.Item`, 请使用必要的字段定义自定义项目，例如图像管道的示例::
+
+    import scrapy
+
+    class MyItem(scrapy.Item):
+
+        # ... other item fields ...
+        image_urls = scrapy.Field()
+        images = scrapy.Field()
+
+如果要为URL键或结果键使用其他字段名称，也可以覆盖它。
+
+对于文件管道，设置 :setting:`FILES_URLS_FIELD` 和/或
+:setting:`FILES_RESULT_FIELD` 设置
+::
+
+    FILES_URLS_FIELD = 'field_name_for_your_files_urls'
+    FILES_RESULT_FIELD = 'field_name_for_your_processed_files'
+
+对于图像管道，设置 :setting:`IMAGES_URLS_FIELD` 和/或
+:setting:`IMAGES_RESULT_FIELD` 设置::
+
+    IMAGES_URLS_FIELD = 'field_name_for_your_images_urls'
+    IMAGES_RESULT_FIELD = 'field_name_for_your_processed_images'
+
+如果您需要更复杂的内容并希望覆盖自定义管道行为，请参阅 :ref:`topics-media-pipeline-override`.
+
+如果您有多个从ImagePipeline继承的图像管道，并且您希望在不同的管道中具有不同的设置，则可以设置前面带有管道类的大写名称的设置键。例如，如果您的管道名为MyPipeline，并且您想要自定义IMAGES_URLS_FIELD，则定义设置MYPIPELINE_IMAGES_URLS_FIELD并使用您的自定义设置。
+
+
+
+
+附加功能
+===================
+
+文件到期
+---------------
+
+.. setting:: IMAGES_EXPIRES
+.. setting:: FILES_EXPIRES
+
+TImage Pipeline避免下载最近下载的文件。要调整此保留延迟，请使用 :setting:`FILES_EXPIRES` 设置（或
+:setting:`IMAGES_EXPIRES`, 在图像管道的情况下），该设置指定天数的延迟::
+
+    # 120 days of delay for files expiration
+    FILES_EXPIRES = 120
+
+    # 30 days of delay for images expiration
+    IMAGES_EXPIRES = 30
+
+两个设置的默认值为90天。
+
+如果您具有子类FilesPipeline的管道，并且您希望为其设置不同的设置，则可以设置以大写类名称开头的设置键。例如，给定名为MyPipeline的管道类，您可以设置设置键:
+
+    MYPIPELINE_FILES_EXPIRES = 180
+
+和管道类MyPipeline将到期时间设置为180。
+
+.. _topics-images-thumbnails:
+
+图像的缩略图生成
+-------------------------------
+
+图像管道可以自动创建下载图像的缩略图。
+
+.. setting:: IMAGES_THUMBS
+
+要使用此功能，您必须设置 :setting:`IMAGES_THUMBS` 为字典，其中键是缩略图名称，值是其尺寸。
+
+例如::
+
+   IMAGES_THUMBS = {
+       'small': (50, 50),
+       'big': (270, 270),
+   }
+
+使用此功能时，图像管道将使用以下格式创建每个指定大小的缩略图::
+
+    <IMAGES_STORE>/thumbs/<size_name>/<image_id>.jpg
+
+其中:
+
+* ``<size_name>`` 是在指定的 :setting:`IMAGES_THUMBS`
+  字典键 (``small``, ``big``, 等)
+
+* ``<image_id>`` 是图像网址的 `SHA1 hash`_ 
+
+.. _SHA1 hash: https://en.wikipedia.org/wiki/SHA_hash_functions
+
+使用``small`` 和 ``big`` 缩略图名称存储的图像文件示例::
+
+   <IMAGES_STORE>/full/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
+   <IMAGES_STORE>/thumbs/small/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
+   <IMAGES_STORE>/thumbs/big/63bbfea82b8880ed33cdb762aa11fab722a90a24.jpg
+
+第一个是从网站下载的完整图像。
+
+过滤小图像
+--------------------------
+
+.. setting:: IMAGES_MIN_HEIGHT
+
+.. setting:: IMAGES_MIN_WIDTH
+
+使用图像管道时，您可以通过在 :setting:`IMAGES_MIN_HEIGHT` 和
+:setting:`IMAGES_MIN_WIDTH` 置中指定允许的最小尺寸来删除太小的图像。
+
+例如::
+
+   IMAGES_MIN_HEIGHT = 110
+   IMAGES_MIN_WIDTH = 110
+
+.. note::
+    大小限制根本不会影响缩略图生成。
+
+可以只设置一个大小约束或两者。设置两者时，仅保存满足两种最小尺寸的图像。对于上面的例子，尺寸（105×105）或（105×200）或（200×105）的图像都将被丢弃，因为至少一个尺寸比约束短。
+
+默认情况下，没有大小限制，因此处理所有图像。
+
+允许重定向
+---------------------
+
+.. setting:: MEDIA_ALLOW_REDIRECTS
+
+默认情况下，媒体管道会忽略重定向，即HTTP重定向到媒体文件URL请求将意味着媒体下载被视为失败。
+
+要处理媒体重定向，请将此设置设置为 ``True``::
+
+    MEDIA_ALLOW_REDIRECTS = True
+
+.. _topics-media-pipeline-override:
+
+扩展媒体管道
+=============================
+
+.. module:: scrapy.pipelines.files
+   :synopsis: Files Pipeline
+
+请在此处查看可在自定义文件管道中覆盖的方法:
+
+.. class:: FilesPipeline
+
+   .. method:: FilesPipeline.get_media_requests(item, info)
+
+     如工作流程所示，管道将获取要从项目下载的图像的URL。为此，您可以覆盖该
+      :meth:`~get_media_requests` 方法并返回每个文件URL的请求::
+
+         def get_media_requests(self, item, info):
+             for file_url in item['file_urls']:
+                 yield scrapy.Request(file_url)
+
+      这些请求将由管道处理，当它们完成下载后，结果将
+      :meth:`~item_completed` 作为2元素元组的列表发送到 方法。每个元组将包含以下内容 ``(success, file_info_or_error)`` :
+
+      * ``success`` 是一个布尔值 ，如果图像下载成功，则为``True`` ，如果由于某种原因失败，则为 ``False`` 
+
+      * ``file_info_or_error`` 是包含以下键的dict（如果success为 ``True``) 或者如果出现问题则为 `Twisted Failure`_ 。
+
+        * ``url`` - 从中​​下载文件的URL。这是从:`~get_media_requests`
+          方法返回的请求的url 。
+
+        * ``path`` - 存储文件的路径（相对于:setting:`FILES_STORE`）
+
+        * ``checksum`` - 图像内容的 `MD5 hash`_ 
+
+      :meth:`~item_completed` i接收的元组列表需要保证与
+      :meth:`~get_media_requests` 方法返回请求的顺序相一致。
+
+      下面是 ``results`` 参数的一个典型值::
+
+          [(True,
+            {'checksum': '2b00042f7481c7b056c4b410d28f33cf',
+             'path': 'full/0a79c461a4062ac383dc4fade7bc09f1384a3910.jpg',
+             'url': 'http://www.example.com/files/product1.pdf'}),
+           (False,
+            Failure(...))]
+
+      默认 :meth:`get_media_requests` 方法返回  ``None`` 意味着项目中没有图片可下载。
+
+   .. method:: FilesPipeline.item_completed(results, item, info)
+
+      当一个单独项目中的所有图片请求完成时（要么完成下载，要么因为某种原因下载失败）， :meth:`FilesPipeline.item_completed` 方法将被调用。
+
+      :meth:`~item_completed` 方法需要返回一个输出，其将被送到随后的项目管道阶段，因此你需要返回（或者丢弃）项目，如你在任意管道里所做的一样。
+      
+      H这里是一个 :meth:`~item_completed` 方法的例子，其中我们将下载的图片路径（传入到results中）存储到 ``file_paths``
+      项目组中，如果其中没有图片，我们将丢弃项目::
+
+          from scrapy.exceptions import DropItem
+
+          def item_completed(self, results, item, info):
+              file_paths = [x['path'] for ok, x in results if ok]
+              if not file_paths:
+                  raise DropItem("Item contains no files")
+              item['file_paths'] = file_paths
+              return item
+
+      默认情况下， :meth:`item_completed` 方法返回项目
+
+
+.. module:: scrapy.pipelines.images
+   :synopsis: Images Pipeline
+
+请在此处查看您可以在自定义图像管道中覆盖的方法:
+
+.. class:: ImagesPipeline
+
+    :class:`ImagesPipeline` 是 :class:`FilesPipeline`,
+    自定义字段名称和为图像添加自定义行为的扩展。
+
+   .. method:: ImagesPipeline.get_media_requests(item, info)
+
+      与 :meth:`FilesPipeline.get_media_requests` 方法的工作方式相同，但对图像URL使用不同的字段名。
+
+      必须为每个图像URL返回一个请求。
+
+   .. method:: ImagesPipeline.item_completed(results, item, info)
+
+      当单个项目的所有图像请求都已完成时（要么下载完毕，要么由于某种原因失败），将调用 :meth:`ImagesPipeline.item_completed` m方法。
+
+      与 :meth:`FilesPipeline.item_completed` 方法的工作方式相同，但使用不同的字段名存储图像下载结果。
+
+      默认情况下，该 :meth:`item_completed` 方法返回该项
+
+
+定制图像管道的例子
+==============================
+
+下面是一个图片管道的完整例子，其方法如上所示::
+
+    import scrapy
+    from scrapy.pipelines.images import ImagesPipeline
+    from scrapy.exceptions import DropItem
+
+    class MyImagesPipeline(ImagesPipeline):
+
+        def get_media_requests(self, item, info):
+            for image_url in item['image_urls']:
+                yield scrapy.Request(image_url)
+
+        def item_completed(self, results, item, info):
+            image_paths = [x['path'] for ok, x in results if ok]
+            if not image_paths:
+                raise DropItem("Item contains no images")
+            item['image_paths'] = image_paths
+            return item
+
+.. _Twisted Failure: https://twistedmatrix.com/documents/current/api/twisted.python.failure.Failure.html
+.. _MD5 hash: https://en.wikipedia.org/wiki/MD5

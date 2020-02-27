@@ -1,0 +1,338 @@
+.. _topics-feed-exports:
+
+============
+Feed 导出
+============
+
+.. versionadded:: 0.10
+
+实现刮刀时最常需要的功能之一是能够正确存储刮削数据，并且通常，这意味着生成带有刮削数据（通常称为“导出进给”）的“导出文件”，以供其他系统使用。
+
+Scrapy通过Feed Exports提供开箱即用的功能，允许您使用多个序列化格式和存储后端生成带有已删除项目的Feed。
+
+.. _topics-feed-format:
+
+Serialization formats
+=====================
+
+对于序列化已删除的数据，Feed导出使用 :ref:`项目导出器
+<topics-exporters>`. 开箱即用支持这些格式：
+
+ * :ref:`topics-feed-format-json`
+ * :ref:`topics-feed-format-jsonlines`
+ * :ref:`topics-feed-format-csv`
+ * :ref:`topics-feed-format-xml`
+
+但您也可以通过
+:setting:`FEED_EXPORTERS` 设置扩展支持的格式 。
+
+.. _topics-feed-format-json:
+
+JSON
+----
+
+ * :setting:`FEED_FORMAT`: ``json``
+ * 导出使用: :class:`~scrapy.exporters.JsonItemExporter`
+ * 如果您将JSON与大型Feed一起使用，请参阅 :ref:`警告 <json-with-large-data>` 
+
+.. _topics-feed-format-jsonlines:
+
+JSON 行
+----------
+
+ * :setting:`FEED_FORMAT`: ``jsonlines``
+ * 导出使用: :class:`~scrapy.exporters.JsonLinesItemExporter`
+
+.. _topics-feed-format-csv:
+
+CSV
+---
+
+ * :setting:`FEED_FORMAT`: ``csv``
+ * 导出使用: :class:`~scrapy.exporters.CsvItemExporter`
+ * 指定要导出的列及其使用顺序
+   :setting:`FEED_EXPORT_FIELDS`. 其他Feed导出器也可以使用此选项，但它对CSV非常重要，因为与许多其他导出格式不同，CSV使用固定标头。
+
+.. _topics-feed-format-xml:
+
+XML
+---
+
+ * :setting:`FEED_FORMAT`: ``xml``
+ * 导出使用: :class:`~scrapy.exporters.XmlItemExporter`
+
+.. _topics-feed-format-pickle:
+
+Pickle
+------
+
+ * :setting:`FEED_FORMAT`: ``pickle``
+ * 导出使用: :class:`~scrapy.exporters.PickleItemExporter`
+
+.. _topics-feed-format-marshal:
+
+Marshal
+-------
+
+ * :setting:`FEED_FORMAT`: ``marshal``
+ * 导出使用: :class:`~scrapy.exporters.MarshalItemExporter`
+
+
+.. _topics-feed-storage:
+
+存储
+========
+
+使用Feed导出时，您可以使用 URI_
+(通过 :setting:`FEED_URI` 设置). 定义存储Feed的位置。Feed导出支持多种存储后端类型，这些类型由URI方案定义。
+
+支持开箱即用的存储后端是：
+
+ * :ref:`topics-feed-storage-fs`
+ * :ref:`topics-feed-storage-ftp`
+ * :ref:`topics-feed-storage-s3` (需要 botocore_ 或 boto_)
+ * :ref:`topics-feed-storage-stdout`
+
+如果所需的外部库不可用，则某些存储后端可能不可用。例如，S3后端仅在安装了 botocore_
+或 boto_ 库时才可用（Scrapy 仅在Python 2上支持 boto_ ).
+
+
+.. _topics-feed-uri-params:
+
+存储URI参数
+======================
+
+存储URI还可以包含在创建订阅源时替换的参数。这些参数是：
+
+ * ``%(time)s`` - 在创建订阅源时，将替换为时间戳
+ * ``%(name)s`` - 被爬虫名称取代
+
+任何其他命名参数都会被同名的spider属性替换。例如， 在创建订阅源的那一刻， ``%(site_id)s`` 它将被 ``spider.site_id``
+属性替换。
+
+以下是一些示例：
+
+ * 使用每个爬虫一个目录存储在FTP中:
+
+   * ``ftp://user:password@ftp.example.com/scraping/feeds/%(name)s/%(time)s.json``
+
+ * 使用每个爬虫一个目录存储在S3中:
+
+   * ``s3://mybucket/scraping/feeds/%(name)s/%(time)s.json``
+
+
+.. _topics-feed-storage-backends:
+
+存储后端
+================
+
+.. _topics-feed-storage-fs:
+
+本地文件系统
+----------------
+
+订阅源存储在本地文件系统中。
+
+ * URI方案: ``file``
+ * 示例URI: ``file:///tmp/export.csv``
+ * 必需的外部库: 无
+
+请注意，对于本地文件系统存储（仅限），如果指定类似的绝对路径，则可以省略该方案 ``/tmp/export.csv``. 这仅适用于Unix系统。
+
+.. _topics-feed-storage-ftp:
+
+FTP
+---
+
+订阅源存储在FTP服务器中。
+
+ * URI方案: ``ftp``
+ * 示例URI: ``ftp://user:pass@ftp.example.com/path/to/export.csv``
+ * 必需的外部库: 无
+
+.. _topics-feed-storage-s3:
+
+S3
+--
+
+The feeds are stored on `Amazon S3`_.
+
+ * URI方案: ``s3``
+ * 示例URI:
+
+   * ``s3://mybucket/path/to/export.csv``
+   * ``s3://aws_key:aws_secret@mybucket/path/to/export.csv``
+
+ * 必需的外部库: `botocore`_ (Python 2 和 Python 3) or `boto`_ (仅限Python 2)
+
+AWS凭证可以作为URI中的用户/密码传递，也可以通过以下设置传递：
+
+ * :setting:`AWS_ACCESS_KEY_ID`
+ * :setting:`AWS_SECRET_ACCESS_KEY`
+
+.. _topics-feed-storage-stdout:
+
+标准输出
+---------------
+
+Feed被写入Scrapy流程的标准输出。
+
+ * URI方案: ``stdout``
+ * 示例URI: ``stdout:``
+ * 必需的外部库: 无
+
+
+设置
+========
+
+这些是用于配置Feed导出的设置：
+
+ * :setting:`FEED_URI` (mandatory)
+ * :setting:`FEED_FORMAT`
+ * :setting:`FEED_STORAGES`
+ * :setting:`FEED_EXPORTERS`
+ * :setting:`FEED_STORE_EMPTY`
+ * :setting:`FEED_EXPORT_ENCODING`
+ * :setting:`FEED_EXPORT_FIELDS`
+ * :setting:`FEED_EXPORT_INDENT`
+
+.. currentmodule:: scrapy.extensions.feedexport
+
+.. setting:: FEED_URI
+
+FEED_URI
+--------
+
+默认: ``None``
+
+导出Feed的URI。有关支持的URI方案，请参阅 :ref:`topics-feed-storage-backends` 。
+
+启用Feed导出需要此设置。
+
+.. setting:: FEED_FORMAT
+
+FEED_FORMAT
+-----------
+
+用于Feed的序列化格式。有关可能的值，请参阅
+
+:ref:`topics-feed-format` for possible values.
+
+.. setting:: FEED_EXPORT_ENCODING
+
+FEED_EXPORT_ENCODING
+--------------------
+
+默认: ``None``
+
+用于Feed的编码。
+
+如果取消设置或设置为 ``None`` (默认) 它将使用UTF-8作为除JSON输出之外的所有内容，JSON输出使用安全数字编码 (``\uXXXX`` 序列）作为历史原因。
+
+``utf-8`` 如果您也想要UTF-8用于JSON，请使用。
+
+.. setting:: FEED_EXPORT_FIELDS
+
+FEED_EXPORT_FIELDS
+------------------
+
+默认: ``None``
+
+要导出的字段列表，可选。示例：: ``FEED_EXPORT_FIELDS = ["foo", "bar", "baz"]``.
+
+使用FEED_EXPORT_FIELDS选项定义要导出的字段及其顺序。
+
+当FEED_EXPORT_FIELDS为空或无（默认）时，Scrapy使用 :class:`~.Item` 爬虫正在产生的dicts或子类中定义的字段。
+
+如果导出器需要一组固定的字段（这是
+:ref:`CSV <topics-feed-format-csv>` 导出格式的情况 ）并且FEED_EXPORT_FIELDS为空或无，则Scrapy会尝试从导出的​​数据中推断字段名称 - 目前它使用第一个项目中的字段名称。
+
+.. setting:: FEED_EXPORT_INDENT
+
+FEED_EXPORT_INDENT
+------------------
+
+默认: ``0``
+
+用于在每个级别上缩进输出的空间量。如果 ``FEED_EXPORT_INDENT``
+是非负整数，则数组元素和对象成员将使用该缩进级别进行漂亮打印。缩进级别 ``0`` （默认值）或负数将把每个项目放在一个新行上。 ``None`` 选择最紧凑的表示。
+
+目前仅由 :class:`~scrapy.exporters.JsonItemExporter`
+和 :class:`~scrapy.exporters.XmlItemExporter` 实现, 即当您导出到 ``.json`` 或 ``.xml``.
+
+.. setting:: FEED_STORE_EMPTY
+
+FEED_STORE_EMPTY
+----------------
+
+默认: ``False``
+
+是否导出空的Feed（即没有项目的Feed）。
+
+.. setting:: FEED_STORAGES
+
+FEED_STORAGES
+-------------
+
+默认: ``{}``
+
+包含项目支持的其他Feed存储后端的dict。键是URI方案，值是存储类的路径。
+
+.. setting:: FEED_STORAGES_BASE
+
+FEED_STORAGES_BASE
+------------------
+
+默认::
+
+    {
+        '': 'scrapy.extensions.feedexport.FileFeedStorage',
+        'file': 'scrapy.extensions.feedexport.FileFeedStorage',
+        'stdout': 'scrapy.extensions.feedexport.StdoutFeedStorage',
+        's3': 'scrapy.extensions.feedexport.S3FeedStorage',
+        'ftp': 'scrapy.extensions.feedexport.FTPFeedStorage',
+    }
+
+包含Scrapy支持的内置Feed存储后端的dict。您可以通过分配 ``None`` 其URI方案 来禁用任何这些后端
+:setting:`FEED_STORAGES`. 例如，要禁用内置FTP存储后端（无需替换），请将其放在 ``settings.py``::
+
+    FEED_STORAGES = {
+        'ftp': None,
+    }
+
+.. setting:: FEED_EXPORTERS
+
+FEED_EXPORTERS
+--------------
+
+默认: ``{}``
+
+包含项目支持的其他导出器的dict。键是序列化格式，值是 :ref:`Item exporter
+<topics-exporters>` 类的路径。
+
+.. setting:: FEED_EXPORTERS_BASE
+
+FEED_EXPORTERS_BASE
+-------------------
+Default::
+
+    {
+        'json': 'scrapy.exporters.JsonItemExporter',
+        'jsonlines': 'scrapy.exporters.JsonLinesItemExporter',
+        'jl': 'scrapy.exporters.JsonLinesItemExporter',
+        'csv': 'scrapy.exporters.CsvItemExporter',
+        'xml': 'scrapy.exporters.XmlItemExporter',
+        'marshal': 'scrapy.exporters.MarshalItemExporter',
+        'pickle': 'scrapy.exporters.PickleItemExporter',
+    }
+
+包含Scrapy支持的内置Feed导出器的dict。您可以通过在其中分配 ``None`` 序列化格式来禁用任何这些导出器 :setting:`FEED_EXPORTERS`. 例如，要禁用内置CSV导出器（无需替换），请将其放入 ``settings.py``::
+
+    FEED_EXPORTERS = {
+        'csv': None,
+    }
+
+.. _URI: https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+.. _Amazon S3: https://aws.amazon.com/s3/
+.. _boto: https://github.com/boto/boto
+.. _botocore: https://github.com/boto/botocore

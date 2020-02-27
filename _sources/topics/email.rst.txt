@@ -1,0 +1,173 @@
+.. _topics-email:
+
+==============
+发送电子邮件
+==============
+
+.. module:: scrapy.mail
+   :synopsis: Email sending facility
+
+尽管Python通过 `smtplib`_
+ 库使发送电子邮件变得相对容易，但Scrapy提供了自己的发送电子邮件的工具，它非常易于使用，并且使用 `Twisted 非阻塞IO实现`_, 以避免干扰非阻塞IO爬虫。它还提供了一个用于发送附件的简单API，并且通过一些
+:ref:`settings <topics-email-settings>` 可以非常轻松地进行配置 。
+
+.. _smtplib: https://docs.python.org/2/library/smtplib.html
+.. _Twisted 非阻塞IO实现: https://twistedmatrix.com/documents/current/core/howto/defer-intro.html
+
+快速示例
+=============
+
+有两种方法可以实例化邮件发件人。您可以使用标准构造函数实例化它::
+
+    from scrapy.mail import MailSender
+    mailer = MailSender()
+
+或者您可以通过Scrapy设置对象实例化它，它将遵循以下 :ref:`settings <topics-email-settings>`::
+
+    mailer = MailSender.from_settings(settings)
+
+以下是如何使用它来发送电子邮件（没有附件）::
+
+    mailer.send(to=["someone@example.com"], subject="Some subject", body="Some body", cc=["another@example.com"])
+
+MailSender 类引用
+==========================
+
+MailSender是用于从Scrapy发送电子邮件的首选类，因为它使用 `Twisted 非阻塞IO实现`_, 就像框架的其余部分一样。
+
+.. class:: MailSender(smtphost=None, mailfrom=None, smtpuser=None, smtppass=None, smtpport=None)
+
+    :param smtphost: the SMTP host to use for sending the emails. If omitted, the
+      :setting:`MAIL_HOST` setting will be used.
+    :type smtphost: str
+
+    :param mailfrom: the address used to send emails (in the ``From:`` header).
+      If omitted, the :setting:`MAIL_FROM` setting will be used.
+    :type mailfrom: str
+
+    :param smtpuser: the SMTP user. If omitted, the :setting:`MAIL_USER`
+      setting will be used. If not given, no SMTP authentication will be
+      performed.
+    :type smtphost: str or bytes
+
+    :param smtppass: the SMTP pass for authentication.
+    :type smtppass: str or bytes
+
+    :param smtpport: the SMTP port to connect to
+    :type smtpport: int
+
+    :param smtptls: enforce using SMTP STARTTLS
+    :type smtptls: boolean
+
+    :param smtpssl: enforce using a secure SSL connection
+    :type smtpssl: boolean
+
+    .. classmethod:: from_settings(settings)
+
+        Instantiate using a Scrapy settings object, which will respect
+        :ref:`these Scrapy settings <topics-email-settings>`.
+
+        :param settings: the e-mail recipients
+        :type settings: :class:`scrapy.settings.Settings` object
+
+    .. method:: send(to, subject, body, cc=None, attachs=(), mimetype='text/plain', charset=None)
+
+        Send email to the given recipients.
+
+        :param to: the e-mail recipients
+        :type to: str or list of str
+
+        :param subject: the subject of the e-mail
+        :type subject: str
+
+        :param cc: the e-mails to CC
+        :type cc: str or list of str
+
+        :param body: the e-mail body
+        :type body: str
+
+        :param attachs: an iterable of tuples ``(attach_name, mimetype,
+          file_object)`` where  ``attach_name`` is a string with the name that will
+          appear on the e-mail's attachment, ``mimetype`` is the mimetype of the
+          attachment and ``file_object`` is a readable file object with the
+          contents of the attachment
+        :type attachs: iterable
+
+        :param mimetype: the MIME type of the e-mail
+        :type mimetype: str
+
+        :param charset: the character encoding to use for the e-mail contents
+        :type charset: str
+
+
+.. _topics-email-settings:
+
+邮件设置
+=============
+
+这些设置定义了 :class:`MailSender`
+类的默认构造函数值，可用于在项目中配置电子邮件通知，而无需编写任何代码（对于那些使用的扩展和代码 :class:`MailSender`）。
+
+.. setting:: MAIL_FROM
+
+MAIL_FROM
+---------
+
+Default: ``'scrapy@localhost'``
+
+Sender email to use (``From:`` header) for sending emails.
+
+.. setting:: MAIL_HOST
+
+MAIL_HOST
+---------
+
+Default: ``'localhost'``
+
+SMTP host to use for sending emails.
+
+.. setting:: MAIL_PORT
+
+MAIL_PORT
+---------
+
+Default: ``25``
+
+SMTP port to use for sending emails.
+
+.. setting:: MAIL_USER
+
+MAIL_USER
+---------
+
+Default: ``None``
+
+User to use for SMTP authentication. If disabled no SMTP authentication will be
+performed.
+
+.. setting:: MAIL_PASS
+
+MAIL_PASS
+---------
+
+Default: ``None``
+
+Password to use for SMTP authentication, along with :setting:`MAIL_USER`.
+
+.. setting:: MAIL_TLS
+
+MAIL_TLS
+--------
+
+Default: ``False``
+
+Enforce using STARTTLS. STARTTLS is a way to take an existing insecure connection, and upgrade it to a secure connection using SSL/TLS.
+
+.. setting:: MAIL_SSL
+
+MAIL_SSL
+--------
+
+Default: ``False``
+
+Enforce connecting using an SSL encrypted connection

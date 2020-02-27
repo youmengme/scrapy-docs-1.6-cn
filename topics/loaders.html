@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Item 装载器 &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Scrapy shell" href="shell.html" />
+    <link rel="prev" title="Items" href="items.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Item 装载器</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#item-loaders">使用 Item Loaders 填充项目</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-loaders-processors">输入输出处理器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">声明 Item Loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-loaders-processors-declaring">声明输入和输出处理器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#item-loader">Item Loader 上下文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#itemloader-objects">ItemLoader objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-loaders-nested">嵌套加载器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-loaders-extending">重用和扩展 Item Loaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scrapy.loader.processors">可用的内置处理器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="shell.html">Scrapy shell</a></li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Item 装载器</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/loaders.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-scrapy.loader">
+<span id="item"></span><span id="topics-loaders"></span><h1>Item 装载器<a class="headerlink" href="#module-scrapy.loader" title="Permalink to this headline">¶</a></h1>
+<p>Item Loaders 程序提供了一种方便的机制来填充已删除的 <a class="reference internal" href="items.html#topics-items"><span class="std std-ref">Items</span></a>. 尽管可以使用自己的类字典API来填充项目，但是项目加载器通过自动执行一些常见任务（如在分配原始提取数据之前解析原始提取数据），提供了一个更方便的API，用于从抓取过程中填充它们。</p>
+<p>换句话说， <a class="reference internal" href="items.html#topics-items"><span class="std std-ref">Items</span></a> 提供了抓取数据的容器，而Item Loaders提供了填充该容器的机制。</p>
+<p>项目加载器旨在提供灵活，高效和简单的机制，用于通过蜘蛛或源格式（HTML，XML等）扩展和覆盖不同的字段解析规则，而不会成为维护的噩梦。</p>
+<div class="section" id="item-loaders">
+<h2>使用 Item Loaders 填充项目<a class="headerlink" href="#item-loaders" title="Permalink to this headline">¶</a></h2>
+<p>要使用Item Loader，你必须先将它实例化。你可以使用类似字典的对象（例如：Item或dict）来进行实例化，或者不使用对象也可以，当不用对象进行实例化的时候，Item会自动使用 <a class="reference internal" href="#scrapy.loader.ItemLoader.default_item_class" title="scrapy.loader.ItemLoader.default_item_class"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ItemLoader.default_item_class</span></code></a> 属性中指定的Item类在Item Loader构造函数中实例化。</p>
+<p>然后，你开始收集数值到Item Loader时，通常使用
+<a class="reference internal" href="selectors.html#topics-selectors"><span class="std std-ref">Selectors</span></a>. 你可以在同一个item field里面添加多个数值; Item Loader将知道如何用合适的处理函数来“添加”这些数值。</p>
+<p>下面是在 <a class="reference internal" href="spiders.html#topics-spiders"><span class="std std-ref">Spider</span></a>, 中典型的项目Loader的用法，使用 <a class="reference internal" href="items.html#topics-items-declaring"><span class="std std-ref">Product item</span></a> 中声明的 <a class="reference internal" href="items.html#topics-items"><span class="std std-ref">Items
+chapter</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.loader</span> <span class="k">import</span> <span class="n">ItemLoader</span>
+<span class="kn">from</span> <span class="nn">myproject.items</span> <span class="k">import</span> <span class="n">Product</span>
+
+<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">Product</span><span class="p">(),</span> <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;//div[@class=&quot;product_name&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;//div[@class=&quot;product_title&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="s1">&#39;//p[@id=&quot;price&quot;]&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">add_css</span><span class="p">(</span><span class="s1">&#39;stock&#39;</span><span class="p">,</span> <span class="s1">&#39;p#stock]&#39;</span><span class="p">)</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;last_updated&#39;</span><span class="p">,</span> <span class="s1">&#39;today&#39;</span><span class="p">)</span> <span class="c1"># you can also use literal values</span>
+    <span class="k">return</span> <span class="n">l</span><span class="o">.</span><span class="n">load_item</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>快速查看这些代码之后，可以我们看到发现 <code class="docutils literal notranslate"><span class="pre">name</span></code> 字段被从页面中两个不同的XPath的位置提取:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">//div[&#64;class=&quot;product_name&quot;]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">//div[&#64;class=&quot;product_title&quot;]</span></code></p></li>
+</ol>
+<p>换言之，通过数据用 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a> 的方法，把从两个不同的XPath的位置提取的数据收集起来。的英文这将在以后分配给 <code class="docutils literal notranslate"><span class="pre">name</span></code> 字段中的数据。</p>
+<p>之后，类似的请求被用于 <code class="docutils literal notranslate"><span class="pre">price</span></code> 和 <code class="docutils literal notranslate"><span class="pre">stock</span></code> 字段 (后者使用 CSS selector  <a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a> 方法), 最后使用不同的方法 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a> 对 <code class="docutils literal notranslate"><span class="pre">last_update</span></code> 填充文本值(<code class="docutils literal notranslate"><span class="pre">today</span></code>)</p>
+<p>最终, 当所有数据被收集起来之后, 调用  <a class="reference internal" href="#scrapy.loader.ItemLoader.load_item" title="scrapy.loader.ItemLoader.load_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.load_item()</span></code></a> 方法, 实际上填充并且返回了之前通过调用  <a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a>,
+<a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a>, 和 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a> 所提取和收集到的数据的Item.</p>
+</div>
+<div class="section" id="topics-loaders-processors">
+<span id="id1"></span><h2>输入输出处理器<a class="headerlink" href="#topics-loaders-processors" title="Permalink to this headline">¶</a></h2>
+<p>Item Loader在每个(Item)字段中都包含了一个输入处理器和一个输出处理器｡ 输入处理器收到数据时立刻提取数据 (通过 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a>, <a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a> or
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">load_item()</span></code> 方法来填充,并得到填充后的
+<a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 对象. 这是当输出处理器被和之前收集到的数据(和用输入处理器处理的)被调用.输出处理器的结果是被分配到Item的最终值｡</p>
+<p>让我们看一个例子来说明如何为特定字段调用输入和输出处理器（同样适用于任何其他字段）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">l</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">Product</span><span class="p">(),</span> <span class="n">some_selector</span><span class="p">)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">xpath1</span><span class="p">)</span> <span class="c1"># (1)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">xpath2</span><span class="p">)</span> <span class="c1"># (2)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">add_css</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">css</span><span class="p">)</span> <span class="c1"># (3)</span>
+<span class="n">l</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span> <span class="c1"># (4)</span>
+<span class="k">return</span> <span class="n">l</span><span class="o">.</span><span class="n">load_item</span><span class="p">()</span> <span class="c1"># (5)</span>
+</pre></div>
+</div>
+<p>发生了这些事情:</p>
+<ol class="arabic simple">
+<li><p>从 <code class="docutils literal notranslate"><span class="pre">xpath1</span></code> 提取出的数据,传递给 输入处理器 的 <code class="docutils literal notranslate"><span class="pre">name</span></code> 字段.输入处理器的结果被收集和保存在Item Loader中(但尚未分配给该Item)｡</p></li>
+<li><p>从 <code class="docutils literal notranslate"><span class="pre">xpath2</span></code> 提取出来的数据,传递给(1)中使用的相同的 输入处理器 .输入处理器的结果被附加到在(1)中收集的数据(如果有的话) ｡</p></li>
+<li><p>这种情况类似于前面的情况，除了从 <code class="docutils literal notranslate"><span class="pre">css</span></code> CSS选择器中提取数据，并通过（1）和（2）中使用的相同输入处理器。输入处理器的结果附加到（1）和（2）中收集的数据（如果有的话）。</p></li>
+<li><p>这种情况也类似于以前的情况，除了直接分配要收集的值，而不是从XPath表达式或CSS选择器中提取。但是，该值仍然通过输入处理器传递。在这种情况下，由于该值不可迭代，因此在将其传递给输入处理器之前将其转换为单个元素的可迭代，因为输入处理器始终接收可迭代。</p></li>
+<li><p>在步骤（1），（2），（3）和（4）中收集的数据通过该字段的输出处理器 <code class="docutils literal notranslate"><span class="pre">name</span></code> 字段.
+输出处理器的结果是分配给 <code class="docutils literal notranslate"><span class="pre">name</span></code>
+字段中项目的值</p></li>
+</ol>
+<p>值得注意的是，处理器只是可调用的对象，可以使用要解析的数据调用它们，并返回已解析的值。因此您可以使用任何功能作为输入或输出处理器。唯一的要求是它们必须接受一个（且只有一个）位置参数，它将是一个迭代器。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>输入和输出处理器都必须接收迭代器作为它们的第一个参数。这些功能的输出可以是任何东西。输入处理器的结果将附加到包含收集值（对于该字段）的内部列表（在Loader中）。输出处理器的结果是最终分配给项目的值。</p>
+</div>
+<p>如果要将普通函数用作处理器，请确保将其 <code class="docutils literal notranslate"><span class="pre">self</span></code> 作为第一个参数接收:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lowercase_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">MyItemLoader</span><span class="p">(</span><span class="n">ItemLoader</span><span class="p">):</span>
+    <span class="n">name_in</span> <span class="o">=</span> <span class="n">lowercase_processor</span>
+</pre></div>
+</div>
+<p>这是因为无论何时将函数指定为类变量，它都会成为一个方法，并在被调用时将实例作为第一个参数传递。有关详细信息，请参阅 <a class="reference external" href="https://stackoverflow.com/a/35322635">this answer on stackoverflow</a> .</p>
+<p>您需要记住的另一件事是输入处理器返回的值在内部收集（在列表中），然后传递给输出处理器以填充字段。</p>
+<p>最后，但并非最不重要的是，为了方便起见，Scrapy 内置了一些 <a class="reference internal" href="#topics-loaders-available-processors"><span class="std std-ref">常用处理器</span></a> .</p>
+</div>
+<div class="section" id="id2">
+<h2>声明 Item Loaders<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>通过使用类定义语法，Item Loaders被声明为Items。这是一个例子:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.loader</span> <span class="k">import</span> <span class="n">ItemLoader</span>
+<span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">TakeFirst</span><span class="p">,</span> <span class="n">MapCompose</span><span class="p">,</span> <span class="n">Join</span>
+
+<span class="k">class</span> <span class="nc">ProductLoader</span><span class="p">(</span><span class="n">ItemLoader</span><span class="p">):</span>
+
+    <span class="n">default_output_processor</span> <span class="o">=</span> <span class="n">TakeFirst</span><span class="p">()</span>
+
+    <span class="n">name_in</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">unicode</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">name_out</span> <span class="o">=</span> <span class="n">Join</span><span class="p">()</span>
+
+    <span class="n">price_in</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">unicode</span><span class="o">.</span><span class="n">strip</span><span class="p">)</span>
+
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<p>如您所见，输入处理器使用 <code class="docutils literal notranslate"><span class="pre">_in</span></code> 后缀声明，而输出处理器使用 <code class="docutils literal notranslate"><span class="pre">_out</span></code> 后缀声明。您还可以使用
+<a class="reference internal" href="#scrapy.loader.ItemLoader.default_input_processor" title="scrapy.loader.ItemLoader.default_input_processor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ItemLoader.default_input_processor</span></code></a> 和
+<a class="reference internal" href="#scrapy.loader.ItemLoader.default_output_processor" title="scrapy.loader.ItemLoader.default_output_processor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ItemLoader.default_output_processor</span></code></a> 属性声明默认的输入/输出处理器 。</p>
+</div>
+<div class="section" id="topics-loaders-processors-declaring">
+<span id="id3"></span><h2>声明输入和输出处理器<a class="headerlink" href="#topics-loaders-processors-declaring" title="Permalink to this headline">¶</a></h2>
+<p>如上一节所示，输入和输出处理器可以在Item Loader定义中声明，以这种方式声明输入处理器是很常见的。但是，还有一个地方可以指定要使用的输入和输出处理器：在 <a class="reference internal" href="items.html#topics-items-fields"><span class="std std-ref">Item Field</span></a> 元数据中。这是一个例子:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+<span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">Join</span><span class="p">,</span> <span class="n">MapCompose</span><span class="p">,</span> <span class="n">TakeFirst</span>
+<span class="kn">from</span> <span class="nn">w3lib.html</span> <span class="k">import</span> <span class="n">remove_tags</span>
+
+<span class="k">def</span> <span class="nf">filter_price</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+<span class="k">class</span> <span class="nc">Product</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Item</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span>
+        <span class="n">input_processor</span><span class="o">=</span><span class="n">MapCompose</span><span class="p">(</span><span class="n">remove_tags</span><span class="p">),</span>
+        <span class="n">output_processor</span><span class="o">=</span><span class="n">Join</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="n">price</span> <span class="o">=</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span>
+        <span class="n">input_processor</span><span class="o">=</span><span class="n">MapCompose</span><span class="p">(</span><span class="n">remove_tags</span><span class="p">,</span> <span class="n">filter_price</span><span class="p">),</span>
+        <span class="n">output_processor</span><span class="o">=</span><span class="n">TakeFirst</span><span class="p">(),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader</span> <span class="k">import</span> <span class="n">ItemLoader</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">il</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">Product</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">il</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;Welcome to my&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;&lt;strong&gt;website&lt;/strong&gt;&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">il</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;&amp;euro;&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;&lt;span&gt;1000&lt;/span&gt;&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">il</span><span class="o">.</span><span class="n">load_item</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: u&#39;Welcome to my website&#39;, &#39;price&#39;: u&#39;1000&#39;}</span>
+</pre></div>
+</div>
+<p>输入和输出处理器的优先顺序如下:</p>
+<ol class="arabic simple">
+<li><p>Item Loader特定于字段的属性: <code class="docutils literal notranslate"><span class="pre">field_in</span></code> 和 <code class="docutils literal notranslate"><span class="pre">field_out</span></code> (高优先级)</p></li>
+<li><p>Field metadata (<code class="docutils literal notranslate"><span class="pre">input_processor</span></code> and <code class="docutils literal notranslate"><span class="pre">output_processor</span></code> key)</p></li>
+<li><p>Item Loader 默认值: <a class="reference internal" href="#scrapy.loader.ItemLoader.default_input_processor" title="scrapy.loader.ItemLoader.default_input_processor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.default_input_processor()</span></code></a> 和
+<a class="reference internal" href="#scrapy.loader.ItemLoader.default_output_processor" title="scrapy.loader.ItemLoader.default_output_processor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.default_output_processor()</span></code></a> (低优先级)</p></li>
+</ol>
+<p>另请参阅: <a class="reference internal" href="#topics-loaders-extending"><span class="std std-ref">重用和扩展 Item Loaders</span></a>.</p>
+</div>
+<div class="section" id="item-loader">
+<span id="topics-loaders-context"></span><h2>Item Loader 上下文<a class="headerlink" href="#item-loader" title="Permalink to this headline">¶</a></h2>
+<p>Item Loader Context 是任意键/值的dict，它在Item Loader中的所有输入和输出处理器之间共享。它可以在声明，实例化或使用Item Loader时传递。它们用于修改输入/输出处理器的行为。</p>
+<p>例如，假设您有一个函数 <code class="docutils literal notranslate"><span class="pre">parse_length</span></code> 接收文本值并从中提取长度:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_length</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">loader_context</span><span class="p">):</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">loader_context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;unit&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
+    <span class="c1"># ... length parsing code goes here ...</span>
+    <span class="k">return</span> <span class="n">parsed_length</span>
+</pre></div>
+</div>
+<p>通过接受一个 <code class="docutils literal notranslate"><span class="pre">loader_context</span></code> 参数，该函数明确地告诉Item Loader它能够接收Item Loader上下文，因此Item Loader在调用它时传递当前活动的上下文，并且处理器函数 (<code class="docutils literal notranslate"><span class="pre">parse_length</span></code> 在这种情况下）可以使用它们。</p>
+<p>有几种方法可以修改Item Loader上下文值:</p>
+<ol class="arabic">
+<li><p>通过修改当前活动的Item Loader上下文
+(<a class="reference internal" href="#scrapy.loader.ItemLoader.context" title="scrapy.loader.ItemLoader.context"><code class="xref py py-attr docutils literal notranslate"><span class="pre">context</span></code></a> 属性):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;unit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cm&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p>在Item Loader实例化中（Item Loader构造函数的关键字参数存储在Item Loader上下文中）:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>在Item Loader声明中，对于那些支持使用Item Loader上下文实例化它们的输入/输出处理器。 <code class="xref py py-class docutils literal notranslate"><span class="pre">MapCompose</span></code> 是其中之一:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ProductLoader</span><span class="p">(</span><span class="n">ItemLoader</span><span class="p">):</span>
+    <span class="n">length_out</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">parse_length</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="itemloader-objects">
+<h2>ItemLoader objects<a class="headerlink" href="#itemloader-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="scrapy.loader.ItemLoader">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.</code><code class="sig-name descname">ItemLoader</code><span class="sig-paren">(</span><span class="optional">[</span><em class="sig-param">item</em>, <em class="sig-param">selector</em>, <em class="sig-param">response</em>, <span class="optional">]</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>返回一个新的Item Loader来填充给定的Item。如果没有给出项目，则使用该类自动实例化一个项目
+<a class="reference internal" href="#scrapy.loader.ItemLoader.default_item_class" title="scrapy.loader.ItemLoader.default_item_class"><code class="xref py py-attr docutils literal notranslate"><span class="pre">default_item_class</span></code></a>.</p>
+</div></blockquote>
+<p>当使用 <cite>selector</cite> 或 <cite>response</cite> 参数进行实例化时, <code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader`该类提供了使用</span> <span class="pre">:ref:`selectors</span></code> 从网页中提取数据的便利机制。.</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">param item</dt>
+<dd class="field-odd"><p>项目实例来填充利用后续调用
+<a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a>, <a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a>,
+或 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a>.</p>
+</dd>
+<dt class="field-even">type item</dt>
+<dd class="field-even"><p><a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> object</p>
+</dd>
+<dt class="field-odd">param selector</dt>
+<dd class="field-odd"><p>The selector to extract data from, when using the
+<a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a> (resp. <a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a>) or <a class="reference internal" href="#scrapy.loader.ItemLoader.replace_xpath" title="scrapy.loader.ItemLoader.replace_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_xpath()</span></code></a>
+(resp. <a class="reference internal" href="#scrapy.loader.ItemLoader.replace_css" title="scrapy.loader.ItemLoader.replace_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_css()</span></code></a>) method.</p>
+</dd>
+<dt class="field-even">type selector</dt>
+<dd class="field-even"><p><a class="reference internal" href="selectors.html#scrapy.selector.Selector" title="scrapy.selector.Selector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Selector</span></code></a> object</p>
+</dd>
+<dt class="field-odd">param response</dt>
+<dd class="field-odd"><p>:attr:<a href="#id4"><span class="problematic" id="id5">`</span></a>default_selector_class`除非给出了selector参数，否则用于构造选择器的响应 ，在这种情况下，忽略该参数。</p>
+</dd>
+<dt class="field-even">type response</dt>
+<dd class="field-even"><p><a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a> object</p>
+</dd>
+</dl>
+<p>item, selector, response 和其余关键字参数分配给Loader上下文（可通过 <a class="reference internal" href="#scrapy.loader.ItemLoader.context" title="scrapy.loader.ItemLoader.context"><code class="xref py py-attr docutils literal notranslate"><span class="pre">context</span></code></a> 属性访问）。</p>
+<p><a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a> 实例有以下方法:</p>
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_value">
+<code class="sig-name descname">get_value</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>通过给定的  <code class="docutils literal notranslate"><span class="pre">processors</span></code> 和关键字处理给定的 <code class="docutils literal notranslate"><span class="pre">value</span></code> 参数</p>
+<blockquote>
+<div><p>可用关键字参数:</p>
+<dl class="field-list simple">
+<dt class="field-odd">param re</dt>
+<dd class="field-odd"><p>a regular expression to use for extracting data from the
+given value using <code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_regex()</span></code> method,
+applied before processors</p>
+</dd>
+<dt class="field-even">type re</dt>
+<dd class="field-even"><p>str or compiled regex</p>
+</dd>
+</dl>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">TakeFirst</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;name: foo&#39;</span><span class="p">,</span> <span class="n">TakeFirst</span><span class="p">(),</span> <span class="n">unicode</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;name: (.+)&#39;</span><span class="p">)</span>
+<span class="go">&#39;FOO`</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.add_value">
+<code class="sig-name descname">add_value</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">value</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.add_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>处理然后为给定字段添加给定的 <code class="docutils literal notranslate"><span class="pre">value</span></code> .</p>
+<p>首先通过 <a class="reference internal" href="#scrapy.loader.ItemLoader.get_value" title="scrapy.loader.ItemLoader.get_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_value()</span></code></a> 给出
+<code class="docutils literal notranslate"><span class="pre">processors</span></code> 和传递该值 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>, 然后通过
+<a class="reference internal" href="#topics-loaders-processors"><span class="std std-ref">字段输入处理器</span></a> 并将其结果附加到为该字段收集的数据中。如果该字段已包含收集的数据，则添加新数据。</p>
+<p>给定的 <code class="docutils literal notranslate"><span class="pre">field_name</span></code> 可以 <code class="docutils literal notranslate"><span class="pre">None</span></code>, 这种情况下，可以添加多个字段的值。并且处理后的值应该是一个字典，其中field_name映射到值。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;Color TV&#39;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;colours&#39;</span><span class="p">,</span> <span class="p">[</span><span class="sa">u</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;blue&#39;</span><span class="p">])</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;100&#39;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="sa">u</span><span class="s1">&#39;name: foo&#39;</span><span class="p">,</span> <span class="n">TakeFirst</span><span class="p">(),</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;name: (.+)&#39;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">:</span> <span class="sa">u</span><span class="s1">&#39;male&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.replace_value">
+<code class="sig-name descname">replace_value</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">value</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.replace_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>与 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a> 但相似但是用新值替换收集的数据而不是添加它。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_xpath">
+<code class="sig-name descname">get_xpath</code><span class="sig-paren">(</span><em class="sig-param">xpath</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.get_value" title="scrapy.loader.ItemLoader.get_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.get_value()</span></code></a> 但接收XPath而不是值，该值用于从与此关联的选择器中提取unicode字符串列表 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xpath</strong> (<em>str</em>) – 从中提取数据的XPath</p></li>
+<li><p><strong>re</strong> (<em>str</em><em> or </em><em>compiled regex</em>) – str 或编译的正则表达式） - 用于从所选XPath区域提取数据的正则表达式</p></li>
+</ul>
+</dd>
+</dl>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># HTML snippet: &lt;p class=&quot;product-name&quot;&gt;Color TV&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">get_xpath</span><span class="p">(</span><span class="s1">&#39;//p[@class=&quot;product-name&quot;]&#39;</span><span class="p">)</span>
+<span class="c1"># HTML snippet: &lt;p id=&quot;price&quot;&gt;the price is $1200&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">get_xpath</span><span class="p">(</span><span class="s1">&#39;//p[@id=&quot;price&quot;]&#39;</span><span class="p">,</span> <span class="n">TakeFirst</span><span class="p">(),</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;the price is (.*)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.add_xpath">
+<code class="sig-name descname">add_xpath</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">xpath</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.add_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.add_value()</span></code></a> 但接收XPath而不是值，该值用于从与此关联的选择器中提取unicode字符串列表 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>.</p>
+<p>参见 <a class="reference internal" href="#scrapy.loader.ItemLoader.get_xpath" title="scrapy.loader.ItemLoader.get_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_xpath()</span></code></a> for <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xpath</strong> (<em>str</em>) – 从中提取数据的XPath</p>
+</dd>
+</dl>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># HTML snippet: &lt;p class=&quot;product-name&quot;&gt;Color TV&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;//p[@class=&quot;product-name&quot;]&#39;</span><span class="p">)</span>
+<span class="c1"># HTML snippet: &lt;p id=&quot;price&quot;&gt;the price is $1200&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="s1">&#39;//p[@id=&quot;price&quot;]&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;the price is (.*)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.replace_xpath">
+<code class="sig-name descname">replace_xpath</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">xpath</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.replace_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_xpath" title="scrapy.loader.ItemLoader.add_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_xpath()</span></code></a> 但替换收集的数据而不是添加它。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_css">
+<code class="sig-name descname">get_css</code><span class="sig-paren">(</span><em class="sig-param">css</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_css" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.get_value" title="scrapy.loader.ItemLoader.get_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.get_value()</span></code></a> 但接收CSS选择器而不是值，用于从与此关联的选择器中提取unicode字符串列表 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>css</strong> (<em>str</em>) – 从中提取数据的CSS选择器</p></li>
+<li><p><strong>re</strong> (<em>str</em><em> or </em><em>compiled regex</em>) – str 或编译的正则表达式） - 用于从所选CSS区域提取数据的正则表达式</p></li>
+</ul>
+</dd>
+</dl>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># HTML snippet: &lt;p class=&quot;product-name&quot;&gt;Color TV&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">get_css</span><span class="p">(</span><span class="s1">&#39;p.product-name&#39;</span><span class="p">)</span>
+<span class="c1"># HTML snippet: &lt;p id=&quot;price&quot;&gt;the price is $1200&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">get_css</span><span class="p">(</span><span class="s1">&#39;p#price&#39;</span><span class="p">,</span> <span class="n">TakeFirst</span><span class="p">(),</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;the price is (.*)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.add_css">
+<code class="sig-name descname">add_css</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">css</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.add_css" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.add_value()</span></code></a> 但接收CSS选择器而不是值，用于从与此关联的选择器中提取unicode字符串列表 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>.</p>
+<p>参见 <a class="reference internal" href="#scrapy.loader.ItemLoader.get_css" title="scrapy.loader.ItemLoader.get_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_css()</span></code></a> 的 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>css</strong> (<em>str</em>) – 从中​​提取数据的CSS选择器</p>
+</dd>
+</dl>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># HTML snippet: &lt;p class=&quot;product-name&quot;&gt;Color TV&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_css</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;p.product-name&#39;</span><span class="p">)</span>
+<span class="c1"># HTML snippet: &lt;p id=&quot;price&quot;&gt;the price is $1200&lt;/p&gt;</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_css</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="s1">&#39;p#price&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">=</span><span class="s1">&#39;the price is (.*)&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.replace_css">
+<code class="sig-name descname">replace_css</code><span class="sig-paren">(</span><em class="sig-param">field_name</em>, <em class="sig-param">css</em>, <em class="sig-param">*processors</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.replace_css" title="Permalink to this definition">¶</a></dt>
+<dd><p>类似于 <a class="reference internal" href="#scrapy.loader.ItemLoader.add_css" title="scrapy.loader.ItemLoader.add_css"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_css()</span></code></a> 但替换收集的数据而不是添加它。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.load_item">
+<code class="sig-name descname">load_item</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.load_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>使用到目前为止收集的数据填充项目，并将其返回。收集的数据首先通过 <a class="reference internal" href="#topics-loaders-processors"><span class="std std-ref">output processors</span></a> 以获得分配给每个项目字段的最终值。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.nested_xpath">
+<code class="sig-name descname">nested_xpath</code><span class="sig-paren">(</span><em class="sig-param">xpath</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.nested_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>使用xpath选择器创建嵌套加载器。提供的选择器相对于与此关联的选择器应用s <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>. 嵌套的加载器与父类 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a> 共享 <code class="xref py py-class docutils literal notranslate"><span class="pre">Item`因此调用</span> <span class="pre">:meth:`add_xpath</span></code>, <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a>, <a class="reference internal" href="#scrapy.loader.ItemLoader.replace_value" title="scrapy.loader.ItemLoader.replace_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_value()</span></code></a> 等将按预期运行。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.nested_css">
+<code class="sig-name descname">nested_css</code><span class="sig-paren">(</span><em class="sig-param">css</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.nested_css" title="Permalink to this definition">¶</a></dt>
+<dd><p>使用CSS选择器创建嵌套加载器。提供的选择器相对于与此关联的选择器应用s <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>. 嵌套的加载器与父类 <a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a> 共享 <code class="xref py py-class docutils literal notranslate"><span class="pre">Item`因此调用</span> <span class="pre">:meth:`add_xpath</span></code>, <a class="reference internal" href="#scrapy.loader.ItemLoader.add_value" title="scrapy.loader.ItemLoader.add_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">add_value()</span></code></a>, <a class="reference internal" href="#scrapy.loader.ItemLoader.replace_value" title="scrapy.loader.ItemLoader.replace_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace_value()</span></code></a> 等将按预期运行。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_collected_values">
+<code class="sig-name descname">get_collected_values</code><span class="sig-paren">(</span><em class="sig-param">field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_collected_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回给定字段的收集值。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_output_value">
+<code class="sig-name descname">get_output_value</code><span class="sig-paren">(</span><em class="sig-param">field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_output_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>对于给定字段，返回使用输出处理器解析的收集值。此方法根本不会填充或修改项目。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_input_processor">
+<code class="sig-name descname">get_input_processor</code><span class="sig-paren">(</span><em class="sig-param">field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_input_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回给定字段的输入处理器。</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="scrapy.loader.ItemLoader.get_output_processor">
+<code class="sig-name descname">get_output_processor</code><span class="sig-paren">(</span><em class="sig-param">field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.ItemLoader.get_output_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>返回给定字段的输出处理器。</p>
+</dd></dl>
+
+<p><a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a> 实例具有以下属性:</p>
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.item">
+<code class="sig-name descname">item</code><a class="headerlink" href="#scrapy.loader.ItemLoader.item" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="items.html#scrapy.item.Item" title="scrapy.item.Item"><code class="xref py py-class docutils literal notranslate"><span class="pre">Item</span></code></a> 对象由此Item Loader解析。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.context">
+<code class="sig-name descname">context</code><a class="headerlink" href="#scrapy.loader.ItemLoader.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>此项加载器的当前活动 <a class="reference internal" href="#topics-loaders-context"><span class="std std-ref">上下文</span></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.default_item_class">
+<code class="sig-name descname">default_item_class</code><a class="headerlink" href="#scrapy.loader.ItemLoader.default_item_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>一个Item类（或工厂），用于在构造函数中未给出时实例化项。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.default_input_processor">
+<code class="sig-name descname">default_input_processor</code><a class="headerlink" href="#scrapy.loader.ItemLoader.default_input_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>用于那些未指定一个字段的默认输入处理器。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.default_output_processor">
+<code class="sig-name descname">default_output_processor</code><a class="headerlink" href="#scrapy.loader.ItemLoader.default_output_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>默认输出处理器，用于那些未指定一个的字段。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.default_selector_class">
+<code class="sig-name descname">default_selector_class</code><a class="headerlink" href="#scrapy.loader.ItemLoader.default_selector_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>T用于构造 <a class="reference internal" href="#scrapy.loader.ItemLoader.selector" title="scrapy.loader.ItemLoader.selector"><code class="xref py py-attr docutils literal notranslate"><span class="pre">selector</span></code></a> 的类
+<a class="reference internal" href="#scrapy.loader.ItemLoader" title="scrapy.loader.ItemLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemLoader</span></code></a>, 如果在构造函数中只给出了响应。如果在构造函数中给出了选择器，则忽略该属性。有时会在子类中重写此属性。</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="scrapy.loader.ItemLoader.selector">
+<code class="sig-name descname">selector</code><a class="headerlink" href="#scrapy.loader.ItemLoader.selector" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Selector`对象从中提取数据。它是构造函数中给出的选择器，或者是使用</span>
+<span class="pre">:attr:`default_selector_class</span></code>. 从构造函数中给出的响应创建的。此属性是只读的。</p>
+</dd></dl>
+
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="topics-loaders-nested">
+<span id="id6"></span><h2>嵌套加载器<a class="headerlink" href="#topics-loaders-nested" title="Permalink to this headline">¶</a></h2>
+<p>解析文档子节中的相关值时，创建嵌套加载器会很有用。想象一下，您从页面的页脚中提取详细信息，如下所示:</p>
+<p>示例:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>&lt;footer&gt;</dt><dd><p>&lt;a class=”social” href=”<a class="reference external" href="https://facebook.com/whatever">https://facebook.com/whatever</a>”&gt;Like Us&lt;/a&gt;
+&lt;a class=”social” href=”<a class="reference external" href="https://twitter.com/whatever">https://twitter.com/whatever</a>”&gt;Follow Us&lt;/a&gt;
+&lt;a class=”email” href=”<a class="reference external" href="mailto:whatever&#37;&#52;&#48;example&#46;com">mailto:whatever<span>&#64;</span>example<span>&#46;</span>com</a>”&gt;Email Us&lt;/a&gt;</p>
+</dd>
+</dl>
+<p>&lt;/footer&gt;</p>
+</div></blockquote>
+<p>如果没有嵌套的加载器，则需要为要提取的每个值指定完整的xpath（或css）。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">Item</span><span class="p">())</span>
+<span class="c1"># load stuff not in the footer</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;social&#39;</span><span class="p">,</span> <span class="s1">&#39;//footer/a[@class = &quot;social&quot;]/@href&#39;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;//footer/a[@class = &quot;email&quot;]/@href&#39;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">load_item</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>相反，您可以使用页脚选择器创建嵌套加载程序并添加相对于页脚的值。功能相同但您避免重复页脚选择器。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loader</span> <span class="o">=</span> <span class="n">ItemLoader</span><span class="p">(</span><span class="n">item</span><span class="o">=</span><span class="n">Item</span><span class="p">())</span>
+<span class="c1"># load stuff not in the footer</span>
+<span class="n">footer_loader</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">nested_xpath</span><span class="p">(</span><span class="s1">&#39;//footer&#39;</span><span class="p">)</span>
+<span class="n">footer_loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;social&#39;</span><span class="p">,</span> <span class="s1">&#39;a[@class = &quot;social&quot;]/@href&#39;</span><span class="p">)</span>
+<span class="n">footer_loader</span><span class="o">.</span><span class="n">add_xpath</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s1">&#39;a[@class = &quot;email&quot;]/@href&#39;</span><span class="p">)</span>
+<span class="c1"># no need to call footer_loader.load_item()</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">load_item</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>您可以任意嵌套加载器，它们可以使用xpath或css选择器。作为一般指导原则，在使代码更简单时使用嵌套加载器，但不要过度嵌套，否则解析器可能难以阅读。</p>
+</div>
+<div class="section" id="topics-loaders-extending">
+<span id="id7"></span><h2>重用和扩展 Item Loaders<a class="headerlink" href="#topics-loaders-extending" title="Permalink to this headline">¶</a></h2>
+<p>随着您的项目变得越来越大并且获得越来越多的爬虫，维护成为一个基本问题，特别是当您必须为每个蜘蛛处理许多不同的解析规则，有很多例外，但又想要重用通用处理器时。</p>
+<p>项目加载器旨在减轻解析规则的维护负担，同时不失去灵活性，同时提供扩展和覆盖它们的便利机制。因此，Item Loaders支持传统的Python类继承，用于处理特定蜘蛛（或爬虫组）的差异。</p>
+<p>例如，假设某个特定站点用三个破折号（例如 <code class="docutils literal notranslate"><span class="pre">---Plasma</span> <span class="pre">TV---</span></code>) 包含其产品名称，并且您不希望最终在最终产品名称中删除这些破折号。</p>
+<p>以下是通过重用和扩展默认的Product Item Loader
+Product Item Loader (<code class="docutils literal notranslate"><span class="pre">ProductLoader</span></code>) 来删除这些破折号的方法:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">MapCompose</span>
+<span class="kn">from</span> <span class="nn">myproject.ItemLoaders</span> <span class="k">import</span> <span class="n">ProductLoader</span>
+
+<span class="k">def</span> <span class="nf">strip_dashes</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SiteSpecificLoader</span><span class="p">(</span><span class="n">ProductLoader</span><span class="p">):</span>
+    <span class="n">name_in</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">strip_dashes</span><span class="p">,</span> <span class="n">ProductLoader</span><span class="o">.</span><span class="n">name_in</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>扩展项加载器非常有用的另一种情况是，当您有多种源格式时，例如XML和HTML。在XML版本中，您可能希望删除 <code class="docutils literal notranslate"><span class="pre">CDATA</span></code> 现的内容。以下是如何执行此操作的示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">MapCompose</span>
+<span class="kn">from</span> <span class="nn">myproject.ItemLoaders</span> <span class="k">import</span> <span class="n">ProductLoader</span>
+<span class="kn">from</span> <span class="nn">myproject.utils.xml</span> <span class="k">import</span> <span class="n">remove_cdata</span>
+
+<span class="k">class</span> <span class="nc">XmlProductLoader</span><span class="p">(</span><span class="n">ProductLoader</span><span class="p">):</span>
+    <span class="n">name_in</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">remove_cdata</span><span class="p">,</span> <span class="n">ProductLoader</span><span class="o">.</span><span class="n">name_in</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>这就是你通常如何扩展输入处理器。</p>
+<p>对于输出处理器，更常见的是在字段元数据中声明它们，因为它们通常仅依赖于字段而不依赖于每个特定站点解析规则（如输入处理器那样）。另请参见:
+<a class="reference internal" href="#topics-loaders-processors-declaring"><span class="std std-ref">声明输入和输出处理器</span></a>.</p>
+<p>还有许多其他可能的方法来扩展，继承和覆盖您的Item Loaders，并且不同的Item Loaders层次结构可能更适合不同的项目。Scrapy只提供机制; 它不会强加您的Loaders集合的任何特定组织 - 这取决于您和您的项目的需求。</p>
+</div>
+<div class="section" id="module-scrapy.loader.processors">
+<span id="id8"></span><span id="topics-loaders-available-processors"></span><h2>可用的内置处理器<a class="headerlink" href="#module-scrapy.loader.processors" title="Permalink to this headline">¶</a></h2>
+<p>即使您可以使用任何可调用函数作为输入和输出处理器，Scrapy也提供了一些常用的处理器，如下所述。其中一些 <a class="reference internal" href="#scrapy.loader.processors.MapCompose" title="scrapy.loader.processors.MapCompose"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapCompose</span></code></a> 如通常用作输入处理器）组成了按顺序执行的几个函数的输出，以产生最终的解析值。</p>
+<p>以下是所有内置处理器的列表:</p>
+<dl class="class">
+<dt id="scrapy.loader.processors.Identity">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">Identity</code><a class="headerlink" href="#scrapy.loader.processors.Identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>最简单的处理器，它什么都不做。它返回原始值不变。它不接收任何构造函数参数，也不接受Loader上下文。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">Identity</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">Identity</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">])</span>
+<span class="go">[&#39;one&#39;, &#39;two&#39;, &#39;three&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.loader.processors.TakeFirst">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">TakeFirst</code><a class="headerlink" href="#scrapy.loader.processors.TakeFirst" title="Permalink to this definition">¶</a></dt>
+<dd><p>从接收的值返回第一个非null /非空值，因此它通常用作单值字段的输出处理器。它不接收任何构造函数参数，也不接受Loader上下文。</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">TakeFirst</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">TakeFirst</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">])</span>
+<span class="go">&#39;one&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.loader.processors.Join">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">Join</code><span class="sig-paren">(</span><em class="sig-param">separator=u' '</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.processors.Join" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>返回与构造函数中给出的分隔符连接的值，默认为 <code class="docutils literal notranslate"><span class="pre">u'</span> <span class="pre">'</span></code>. 它不接受Loader上下文。</p>
+</div></blockquote>
+<p>使用默认分隔符时，此处理器等同于函数: <code class="docutils literal notranslate"><span class="pre">u'</span> <span class="pre">'.join</span></code></p>
+<blockquote>
+<div><p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">Join</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">Join</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">])</span>
+<span class="go">&#39;one two three&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">Join</span><span class="p">(</span><span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;one&#39;</span><span class="p">,</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span> <span class="s1">&#39;three&#39;</span><span class="p">])</span>
+<span class="go">&#39;one&lt;br&gt;two&lt;br&gt;three&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.loader.processors.Compose">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">Compose</code><span class="sig-paren">(</span><em class="sig-param">*functions</em>, <em class="sig-param">**default_loader_context</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.processors.Compose" title="Permalink to this definition">¶</a></dt>
+<dd><p>一种处理器，它由给定功能的组合构成。这意味着该处理器的每个输入值都被传递给第一个函数，并且该函数的结果被传递给第二个函数，依此类推，直到最后一个函数返回该处理器的输出值。</p>
+<p>默认情况下，停止处理 <code class="docutils literal notranslate"><span class="pre">None</span></code> 值。可以通过传递关键字参数 <code class="docutils literal notranslate"><span class="pre">stop_on_none=False</span></code> 来更改此行为。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">Compose</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">])</span>
+<span class="go">&#39;HELLO&#39;</span>
+</pre></div>
+</div>
+<p>每个函数都可以选择接收 <code class="docutils literal notranslate"><span class="pre">loader_context</span></code> 参数。对于那些处理器，该处理器将通过该参数传递当前活动的 <a class="reference internal" href="#topics-loaders-context"><span class="std std-ref">Loader
+上下文</span></a> .</p>
+<p>构造函数中传递的关键字参数用作传递给每个函数调用的默认Loader上下文值。但是，传递给函数的最终Loader上下文值将被当前活动的Loader上下文覆盖，该上下文可通过该 <code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemLoader.context()</span></code> 属性访问。</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.loader.processors.MapCompose">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">MapCompose</code><span class="sig-paren">(</span><em class="sig-param">*functions</em>, <em class="sig-param">**default_loader_context</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.processors.MapCompose" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>一种处理器，它由给定功能的组合构成，类似于 <a class="reference internal" href="#scrapy.loader.processors.Compose" title="scrapy.loader.processors.Compose"><code class="xref py py-class docutils literal notranslate"><span class="pre">Compose</span></code></a> 处理器。与此处理器的不同之处在于内部结果在函数之间传递的方式，如下所示:</p>
+<p>迭代该处理器的输入值，并将第一个函数应用于每个元素。这些函数调用的结果（每个元素一个）被连接起来构造一个新的iterable，然后用于应用​​第二个函数，依此类推，直到最后一个函数应用于所收集的值列表的每个值，远。最后一个函数的输出值连接在一起以产生该处理器的输出。</p>
+<p>每个特定函数都可以返回值或值列表，这些值使用应用于其他输入值的相同函数返回的值列表进行展平。函数也可以返回，<code class="docutils literal notranslate"><span class="pre">None</span></code> 在这种情况下，忽略该函数的输出以进行链上的进一步处理。</p>
+</div></blockquote>
+<dl>
+<dt>此处理器提供了一种方便的方法来组合仅使用单个值（而不是迭代）的函数。由于这个原因，</dt><dd><p><a class="reference internal" href="#scrapy.loader.processors.MapCompose" title="scrapy.loader.processors.MapCompose"><code class="xref py py-class docutils literal notranslate"><span class="pre">MapCompose</span></code></a> 处理器通常用作输入处理器，因为数据通常使用
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">extract()</span></code> 方法提取  <a class="reference internal" href="selectors.html#topics-selectors"><span class="std std-ref">selectors</span></a> 返回一个unicode字符串列表。</p>
+<p>以下示例应阐明其工作原理:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">filter_world</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;world&#39;</span> <span class="k">else</span> <span class="n">x</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">MapCompose</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">filter_world</span><span class="p">,</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">([</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="s1">&#39;this&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="s1">&#39;scrapy&#39;</span><span class="p">])</span>
+<span class="go">[&#39;HELLO, &#39;THIS&#39;, &#39;IS&#39;, &#39;SCRAPY&#39;]</span>
+</pre></div>
+</div>
+</dd>
+<dt>与Compose处理器一样，函数可以接收Loader上下文，构造函数关键字参数用作默认上下文值。请参阅</dt><dd><p><a class="reference internal" href="#scrapy.loader.processors.Compose" title="scrapy.loader.processors.Compose"><code class="xref py py-class docutils literal notranslate"><span class="pre">Compose</span></code></a> 处理器了解更多信息</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="scrapy.loader.processors.SelectJmes">
+<em class="property">class </em><code class="sig-prename descclassname">scrapy.loader.processors.</code><code class="sig-name descname">SelectJmes</code><span class="sig-paren">(</span><em class="sig-param">json_path</em><span class="sig-paren">)</span><a class="headerlink" href="#scrapy.loader.processors.SelectJmes" title="Permalink to this definition">¶</a></dt>
+<dd><p>使用提供给构造函数的json路径查询值并返回输出。
+需要 jmespath (<a class="reference external" href="https://github.com/jmespath/jmespath.py">https://github.com/jmespath/jmespath.py</a>) 才能运行。
+该处理器一次只能输入一个输入。</p>
+<p>示例:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scrapy.loader.processors</span> <span class="k">import</span> <span class="n">SelectJmes</span><span class="p">,</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">MapCompose</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span> <span class="o">=</span> <span class="n">SelectJmes</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span> <span class="c1">#for direct use on lists and dictionaries</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">({</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc</span><span class="p">({</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="s1">&#39;baz&#39;</span><span class="p">}})</span>
+<span class="go">{&#39;bar&#39;: &#39;baz&#39;}</span>
+</pre></div>
+</div>
+<p>和Json一起工作:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">json</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc_single_json_str</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">SelectJmes</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc_single_json_str</span><span class="p">(</span><span class="s1">&#39;{&quot;foo&quot;: &quot;bar&quot;}&#39;</span><span class="p">)</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc_json_list</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">MapCompose</span><span class="p">(</span><span class="n">SelectJmes</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">proc_json_list</span><span class="p">(</span><span class="s1">&#39;[{&quot;foo&quot;:&quot;bar&quot;}, {&quot;baz&quot;:&quot;tar&quot;}]&#39;</span><span class="p">)</span>
+<span class="go">[&#39;bar&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="shell.html" class="btn btn-neutral float-right" title="Scrapy shell" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="items.html" class="btn btn-neutral float-left" title="Items" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

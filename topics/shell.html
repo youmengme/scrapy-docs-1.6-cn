@@ -1,0 +1,499 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Scrapy shell &mdash; Scrapy 1.6.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Item Pipeline（项目管道）" href="item-pipeline.html" />
+    <link rel="prev" title="Item 装载器" href="loaders.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Scrapy
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">First steps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/overview.html">Scrapy 一目了然</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/install.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/tutorial.html">Scrapy教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/examples.html">示例</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic concepts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="commands.html">命令行工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spiders.html">爬虫（Spiders）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="selectors.html">选择器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="items.html">Items</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Item 装载器</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scrapy shell</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">启动</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">使用</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">可用的快捷方式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scrapy">可用的Scrapy对象</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#shell">shell会话示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spidershellresponse">在spider中调用shell来查看response</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="item-pipeline.html">Item Pipeline（项目管道）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="feed-exports.html">Feed 导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="request-response.html">请求与响应</a></li>
+<li class="toctree-l1"><a class="reference internal" href="link-extractors.html">链接提取器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">设置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">例外</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Built-in services</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">统计收集</a></li>
+<li class="toctree-l1"><a class="reference internal" href="email.html">发送电子邮件</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telnetconsole.html">Telnet 控制台</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Web 服务</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Solving specific problems</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debug.html">Debugging Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contracts.html">Spiders Contracts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practices.html">Common Practices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="broad-crawls.html">Broad Crawls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer-tools.html">Using your browser’s Developer Tools for scraping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaks.html">Debugging memory leaks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="media-pipeline.html">下载和处理文件与图像</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploying Spiders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autothrottle.html">AutoThrottle 扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jobs.html">Jobs: pausing and resuming crawls</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending Scrapy</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="downloader-middleware.html">Downloader Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spider-middleware.html">Spider Middleware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extensions.html">扩展</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Core API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signals.html">信号(Signals)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exporters.html">Item Exporters</a></li>
+</ul>
+<p class="caption"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../news.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Scrapy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versioning.html">Versioning and API Stability</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Scrapy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Scrapy shell</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/topics/shell.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="scrapy-shell">
+<span id="topics-shell"></span><h1>Scrapy shell<a class="headerlink" href="#scrapy-shell" title="Permalink to this headline">¶</a></h1>
+<p>Scrapy shell是一个交互式shell，您可以在其中快速尝试和调试您的抓取代码，而无需运行spider程序。它意味着用于测试数据提取代码，但你实际上可以使用它来测试任何类型的代码，因为它也是一个普通的Python shell。</p>
+<p>Tshell用于测试XPath或CSS表达式，并查看它们如何工作，以及他们从您要尝试抓取的网页中提取的数据。它允许您在编写spider时交互式测试表达式，而无需运行spider来测试每个更改。</p>
+<p>一旦您熟悉了Scrapy shell，你会发现它是开发和调试你的spider的一个非常宝贵的工具。</p>
+<div class="section" id="id1">
+<h2>配置<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>如果您安装了 <a class="reference external" href="https://ipython.org/">IPython</a> ，Scrapy shell 会使用它（而不是标准的Python控制台）。 <a class="reference external" href="https://ipython.org/">IPython</a> 控制台更强大，并提供智能自动补全和高亮输出，等等。</p>
+<p>我们强烈推荐您安装 <a class="reference external" href="https://ipython.org/">IPython</a>, 特别是如果您使用Unix系统 ( <a class="reference external" href="https://ipython.org/">IPython</a> 在Unix下工作的很好). 详情请参考 <a class="reference external" href="https://ipython.org/install.html">IPython installation guide</a>
+for more info.</p>
+<p>Scrapy还支持 <a class="reference external" href="https://www.bpython-interpreter.org/">bpython</a>, 并且将尝试在 <a class="reference external" href="https://ipython.org/">IPython</a>
+不可用时使用它。</p>
+<p>通过scrapy的设置，您可以将其配置为使用
+<code class="docutils literal notranslate"><span class="pre">ipython</span></code>, <code class="docutils literal notranslate"><span class="pre">bpython</span></code> 或标准 <code class="docutils literal notranslate"><span class="pre">python</span></code> shell中的任何一个，而不管它们是否安装。这是通过设置 <code class="docutils literal notranslate"><span class="pre">SCRAPY_PYTHON_SHELL</span></code> 环境变量来完成的;或者通过在 <a class="reference internal" href="commands.html#topics-config-settings"><span class="std std-ref">scrapy.cfg</span></a> 中定义它:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">settings</span><span class="p">]</span>
+<span class="n">shell</span> <span class="o">=</span> <span class="n">bpython</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>启动<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>您可以使用 <a class="reference internal" href="commands.html#std:command-shell"><code class="xref std std-command docutils literal notranslate"><span class="pre">shell</span></code></a> 来启动Scrapy终端:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   scrapy shell &lt;url&gt;
+
+``&lt;url&gt;`` 是您要爬取的网页的地址。
+</pre></div>
+</div>
+<p><a class="reference internal" href="commands.html#std:command-shell"><code class="xref std std-command docutils literal notranslate"><span class="pre">shell</span></code></a> 也适用于本地文件。如果你想玩一个本地的网页副本，这可以很方便。 <a class="reference internal" href="commands.html#std:command-shell"><code class="xref std std-command docutils literal notranslate"><span class="pre">shell</span></code></a> 抓取本地文件的语法如下:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># UNIX-style</span>
+<span class="n">scrapy</span> <span class="n">shell</span> <span class="o">./</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">html</span>
+<span class="n">scrapy</span> <span class="n">shell</span> <span class="o">../</span><span class="n">other</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">html</span>
+<span class="n">scrapy</span> <span class="n">shell</span> <span class="o">/</span><span class="n">absolute</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">html</span>
+
+<span class="c1"># File URI</span>
+<span class="n">scrapy</span> <span class="n">shell</span> <span class="n">file</span><span class="p">:</span><span class="o">///</span><span class="n">absolute</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">html</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>注意！ 当使用相对文件路径时，应显式地使用 <code class="docutils literal notranslate"><span class="pre">./</span></code> (或 <code class="docutils literal notranslate"><span class="pre">../</span></code> 如果相关)前缀.
+<code class="docutils literal notranslate"><span class="pre">scrapy</span> <span class="pre">shell</span> <span class="pre">index.html</span></code>  不会正常工作（这是设计，而不是一个错误）。</p>
+<p>因为 <a class="reference internal" href="commands.html#std:command-shell"><code class="xref std std-command docutils literal notranslate"><span class="pre">shell</span></code></a> 优先于文件URI的HTTP URL,
+并且 <code class="docutils literal notranslate"><span class="pre">index.html</span></code> 在语法上类似于 <code class="docutils literal notranslate"><span class="pre">example.com</span></code>,
+所以:command:<cite>shell</cite> 将 <code class="docutils literal notranslate"><span class="pre">index.html</span></code> 视为域名并触发DNS查找错误r:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ scrapy shell index.html
+[ ... scrapy shell starts ... ]
+[ ... traceback ... ]
+twisted.internet.error.DNSLookupError: DNS lookup failed:
+address &#39;index.html&#39; not found: [Errno -5] No address associated with hostname.
+</pre></div>
+</div>
+<p>再次明确一点，如果在当前目录中存在一个名为 <code class="docutils literal notranslate"><span class="pre">index.html</span></code> 的文件,:command:<cite>shell</cite> w 将不会预先测试。</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>使用<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>Scrapy shell只是一个普通的Python控制台 (或 <a class="reference external" href="https://ipython.org/">IPython</a> 控制台，如果你有它) 为方便起见，它提供了一些额外的快捷方式功能。</p>
+<div class="section" id="id4">
+<h3>可用的快捷方式<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">shelp()</span></code> - 打印可用对象及快捷命令的帮助列表</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fetch(url[,</span> <span class="pre">redirect=True])</span></code> - 根据给定的request获取新的response并相应地更新所有相关对象。 您可以选择请求HTTP 3xx重定向不要在后面传递 <code class="docutils literal notranslate"><span class="pre">redirect=False</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fetch(request)</span></code> - 根据给定的request获取新的response并相应地更新所有相关对象。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">view(response)</span></code> - 在本机的浏览器打开给定的 response。 其会在response的body中添加一个 <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base">&lt;base&gt;</a> 标签,以便正确显示外部链接（如图像和样式表）。但请注意，这将在您的计算机中创建一个临时文件，该文件不会自动删除。</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="scrapy">
+<h3>可用的Scrapy对象<a class="headerlink" href="#scrapy" title="Permalink to this headline">¶</a></h3>
+<p>Scrapy终端根据下载的页面会自动创建一些方便使用的对象，例如 <a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a> 对象及
+<a class="reference internal" href="selectors.html#scrapy.selector.Selector" title="scrapy.selector.Selector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Selector</span></code></a> 对象(对HTML及XML内容)。</p>
+<p>这些对象有:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">crawler</span></code> - 当前 <a class="reference internal" href="api.html#scrapy.crawler.Crawler" title="scrapy.crawler.Crawler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Crawler</span></code></a> 对象.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">spider</span></code> - 处理URL的spider。 对当前URL没有处理的Spider时则为一个
+<a class="reference internal" href="spiders.html#scrapy.spiders.Spider" title="scrapy.spiders.Spider"><code class="xref py py-class docutils literal notranslate"><span class="pre">Spider</span></code></a> 对象.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">request</span></code> - 最近获取到的页面的 <a class="reference internal" href="request-response.html#scrapy.http.Request" title="scrapy.http.Request"><code class="xref py py-class docutils literal notranslate"><span class="pre">Request</span></code></a> 对象。 您可以使用 <a class="reference internal" href="request-response.html#scrapy.http.Request.replace" title="scrapy.http.Request.replace"><code class="xref py py-meth docutils literal notranslate"><span class="pre">replace()</span></code></a>
+修改该request。或者 使用  <code class="docutils literal notranslate"><span class="pre">fetch</span></code>
+快捷方式来获取新的request。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">response</span></code> - 包含最近获取到的页面的 <a class="reference internal" href="request-response.html#scrapy.http.Response" title="scrapy.http.Response"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></a> 对象.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settings</span></code> - 当前的 <a class="reference internal" href="settings.html#topics-settings"><span class="std std-ref">Scrapy 设置</span></a></p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="shell">
+<h2>shell会话示例<a class="headerlink" href="#shell" title="Permalink to this headline">¶</a></h2>
+<p>下面是一个典型的shell会话示例，我们首先抓取 <a class="reference external" href="https://scrapy.org">https://scrapy.org</a> 页面，然后继续抓取 <a class="reference external" href="https://reddit.com">https://reddit.com</a> 页面。最后，我们修改（Reddit）请求方法为POST并重新获取它得到一个错误。我们通过在Windows中键入Ctrl-D（在Unix系统中）或Ctrl-Z结束会话。</p>
+<p>需要注意的是，由于爬取的页面不是静态页，内容会随着时间而修改， 因此例子中提取到的数据可能与您尝试的结果不同。 该例子的唯一目的是让您熟悉Scrapy shell。</p>
+<p>首先，我们启动shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scrapy</span> <span class="n">shell</span> <span class="s1">&#39;https://scrapy.org&#39;</span> <span class="o">--</span><span class="n">nolog</span>
+</pre></div>
+</div>
+<p>然后，shell获取URL（使用Scrapy下载器）并打印可用对象和有用的快捷方式列表（您会注意到这些行都以 <code class="docutils literal notranslate"><span class="pre">[s]</span></code> 前缀开头):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="n">Available</span> <span class="n">Scrapy</span> <span class="n">objects</span><span class="p">:</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">scrapy</span>     <span class="n">scrapy</span> <span class="n">module</span> <span class="p">(</span><span class="n">contains</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Selector</span><span class="p">,</span> <span class="n">etc</span><span class="p">)</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">crawler</span>    <span class="o">&lt;</span><span class="n">scrapy</span><span class="o">.</span><span class="n">crawler</span><span class="o">.</span><span class="n">Crawler</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f07395dd690</span><span class="o">&gt;</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">item</span>       <span class="p">{}</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">request</span>    <span class="o">&lt;</span><span class="n">GET</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">scrapy</span><span class="o">.</span><span class="n">org</span><span class="o">&gt;</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">response</span>   <span class="o">&lt;</span><span class="mi">200</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">scrapy</span><span class="o">.</span><span class="n">org</span><span class="o">/&gt;</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">settings</span>   <span class="o">&lt;</span><span class="n">scrapy</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">Settings</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f07395dd710</span><span class="o">&gt;</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">spider</span>     <span class="o">&lt;</span><span class="n">DefaultSpider</span> <span class="s1">&#39;default&#39;</span> <span class="n">at</span> <span class="mh">0x7f0735891690</span><span class="o">&gt;</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="n">Useful</span> <span class="n">shortcuts</span><span class="p">:</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">fetch</span><span class="p">(</span><span class="n">url</span><span class="p">[,</span> <span class="n">redirect</span><span class="o">=</span><span class="kc">True</span><span class="p">])</span> <span class="n">Fetch</span> <span class="n">URL</span> <span class="ow">and</span> <span class="n">update</span> <span class="n">local</span> <span class="n">objects</span> <span class="p">(</span><span class="n">by</span> <span class="n">default</span><span class="p">,</span> <span class="n">redirects</span> <span class="n">are</span> <span class="n">followed</span><span class="p">)</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">fetch</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>                  <span class="n">Fetch</span> <span class="n">a</span> <span class="n">scrapy</span><span class="o">.</span><span class="n">Request</span> <span class="ow">and</span> <span class="n">update</span> <span class="n">local</span> <span class="n">objects</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">shelp</span><span class="p">()</span>           <span class="n">Shell</span> <span class="n">help</span> <span class="p">(</span><span class="nb">print</span> <span class="n">this</span> <span class="n">help</span><span class="p">)</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">view</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>    <span class="n">View</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">browser</span>
+
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>之后，我们可以开始使用对象:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//title/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">&#39;Scrapy | A Fast and Powerful Scraping and Web Crawling Framework&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;https://reddit.com&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//title/text()&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="go">&#39;reddit: the front page of the internet&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fetch</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">status</span>
+<span class="go">404</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+<span class="go">{&#39;Accept-Ranges&#39;: [&#39;bytes&#39;],</span>
+<span class="go"> &#39;Cache-Control&#39;: [&#39;max-age=0, must-revalidate&#39;],</span>
+<span class="go"> &#39;Content-Type&#39;: [&#39;text/html; charset=UTF-8&#39;],</span>
+<span class="go"> &#39;Date&#39;: [&#39;Thu, 08 Dec 2016 16:21:19 GMT&#39;],</span>
+<span class="go"> &#39;Server&#39;: [&#39;snooserv&#39;],</span>
+<span class="go"> &#39;Set-Cookie&#39;: [&#39;loid=KqNLou0V9SKMX4qb4n; Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Dec-2018 16:21:19 GMT; secure&#39;,</span>
+<span class="go">                &#39;loidcreated=2016-12-08T16%3A21%3A19.445Z; Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Dec-2018 16:21:19 GMT; secure&#39;,</span>
+<span class="go">                &#39;loid=vi0ZVe4NkxNWdlH7r7; Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Dec-2018 16:21:19 GMT; secure&#39;,</span>
+<span class="go">                &#39;loidcreated=2016-12-08T16%3A21%3A19.459Z; Domain=reddit.com; Max-Age=63071999; Path=/; expires=Sat, 08-Dec-2018 16:21:19 GMT; secure&#39;],</span>
+<span class="go"> &#39;Vary&#39;: [&#39;accept-encoding&#39;],</span>
+<span class="go"> &#39;Via&#39;: [&#39;1.1 varnish&#39;],</span>
+<span class="go"> &#39;X-Cache&#39;: [&#39;MISS&#39;],</span>
+<span class="go"> &#39;X-Cache-Hits&#39;: [&#39;0&#39;],</span>
+<span class="go"> &#39;X-Content-Type-Options&#39;: [&#39;nosniff&#39;],</span>
+<span class="go"> &#39;X-Frame-Options&#39;: [&#39;SAMEORIGIN&#39;],</span>
+<span class="go"> &#39;X-Moose&#39;: [&#39;majestic&#39;],</span>
+<span class="go"> &#39;X-Served-By&#39;: [&#39;cache-cdg8730-CDG&#39;],</span>
+<span class="go"> &#39;X-Timer&#39;: [&#39;S1481214079.394283,VS0,VE159&#39;],</span>
+<span class="go"> &#39;X-Ua-Compatible&#39;: [&#39;IE=edge&#39;],</span>
+<span class="go"> &#39;X-Xss-Protection&#39;: [&#39;1; mode=block&#39;]}</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="spidershellresponse">
+<span id="topics-shell-inspect-response"></span><h2>在spider中调用shell来查看response<a class="headerlink" href="#spidershellresponse" title="Permalink to this headline">¶</a></h2>
+<p>有时您想在spider的某个位置中查看被处理的response， 以确认您期望的response到达特定位置。</p>
+<p>这可以通过 <code class="docutils literal notranslate"><span class="pre">scrapy.shell.inspect_response</span></code> 函数来实现。</p>
+<p>以下是如何在spider中调用该函数的例子:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scrapy</span>
+
+
+<span class="k">class</span> <span class="nc">MySpider</span><span class="p">(</span><span class="n">scrapy</span><span class="o">.</span><span class="n">Spider</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;myspider&quot;</span>
+    <span class="n">start_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;http://example.com&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://example.org&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http://example.net&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="c1"># We want to inspect one specific response.</span>
+        <span class="k">if</span> <span class="s2">&quot;.org&quot;</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">scrapy.shell</span> <span class="k">import</span> <span class="n">inspect_response</span>
+            <span class="n">inspect_response</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Rest of parsing code.</span>
+</pre></div>
+</div>
+<p>当运行spider时，您将得到类似下列的输出:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2014</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">23</span> <span class="mi">17</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">31</span><span class="o">-</span><span class="mi">0400</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">engine</span><span class="p">]</span> <span class="n">DEBUG</span><span class="p">:</span> <span class="n">Crawled</span> <span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">referer</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="mi">2014</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">23</span> <span class="mi">17</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">31</span><span class="o">-</span><span class="mi">0400</span> <span class="p">[</span><span class="n">scrapy</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">engine</span><span class="p">]</span> <span class="n">DEBUG</span><span class="p">:</span> <span class="n">Crawled</span> <span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">&lt;</span><span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">org</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">referer</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="n">Available</span> <span class="n">Scrapy</span> <span class="n">objects</span><span class="p">:</span>
+<span class="p">[</span><span class="n">s</span><span class="p">]</span>   <span class="n">crawler</span>    <span class="o">&lt;</span><span class="n">scrapy</span><span class="o">.</span><span class="n">crawler</span><span class="o">.</span><span class="n">Crawler</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1e16b50</span><span class="o">&gt;</span>
+<span class="o">...</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">url</span>
+<span class="s1">&#39;http://example.org&#39;</span>
+</pre></div>
+</div>
+<p>然后，您可以检查提取代码是否正常工作:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">response</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s1">&#39;//h1[@class=&quot;fn&quot;]&#39;</span><span class="p">)</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<p>您可以在Web浏览器中打开response，看看它是否是您期望的response:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">view</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>最后您可以点击Ctrl-D(Windows下Ctrl-Z)来退出终端，恢复爬取:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="o">^</span><span class="n">D</span>
+<span class="go">2014-01-23 17:50:03-0400 [scrapy.core.engine] DEBUG: Crawled (200) &lt;GET http://example.net&gt; (referer: None)</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>请注意，您不能在这里使用 <code class="docutils literal notranslate"><span class="pre">fetch</span></code> 快捷命令，因为Scrapy引擎被shell阻止。然而，在你离开shell之后，spider会继续爬到它停止的地方，如上图所示</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="item-pipeline.html" class="btn btn-neutral float-right" title="Item Pipeline（项目管道）" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="loaders.html" class="btn btn-neutral float-left" title="Item 装载器" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2008–2018, Scrapy developers
+      <span class="lastupdated">
+        Last updated on Feb 27, 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+  
+ 
+<script type="text/javascript">
+!function(){var analytics=window.analytics=window.analytics||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","page","once","off","on"];analytics.factory=function(t){return function(){var e=Array.prototype.slice.call(arguments);e.unshift(t);analytics.push(e);return analytics}};for(var t=0;t<analytics.methods.length;t++){var e=analytics.methods[t];analytics[e]=analytics.factory(e)}analytics.load=function(t){var e=document.createElement("script");e.type="text/javascript";e.async=!0;e.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.com/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(e,n)};analytics.SNIPPET_VERSION="3.1.0";
+analytics.load("8UDQfnf3cyFSTsM4YANnW5sXmgZVILbA");
+analytics.page();
+}}();
+
+analytics.ready(function () {
+    ga('require', 'linker');
+    ga('linker:autoLink', ['scrapinghub.com', 'crawlera.com']);
+});
+</script>
+
+
+</body>
+</html>

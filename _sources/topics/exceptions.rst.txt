@@ -1,0 +1,73 @@
+.. _topics-exceptions:
+
+==========
+例外
+==========
+
+.. module:: scrapy.exceptions
+   :synopsis: Scrapy exceptions
+
+.. _topics-exceptions-ref:
+
+内置异常参考
+=============================
+
+以下是Scrapy中包含的所有异常及其用法的列表。
+
+DropItem
+--------
+
+.. exception:: DropItem
+
+项目管道阶段必须引发的异常才能停止处理Item。有关更多信息，请参阅 :ref:`topics-item-pipeline`.
+
+CloseSpider
+-----------
+
+.. exception:: CloseSpider(reason='cancelled')
+
+    可以从爬虫回调引发此异常，以请求关闭/停止爬虫。支持的参数:
+
+    :param reason: 关闭的原因
+    :type reason: str
+
+示例::
+
+    def parse_page(self, response):
+        if 'Bandwidth exceeded' in response.body:
+            raise CloseSpider('bandwidth_exceeded')
+
+DontCloseSpider
+---------------
+
+.. exception:: DontCloseSpider
+
+可以在 :signal:`spider_idle` 信号处理程序中引发此异常，以防止爬虫被关闭。
+
+IgnoreRequest
+-------------
+
+.. exception:: IgnoreRequest
+
+调度程序或任何下载程序中间件可以引发此异常，以指示应忽略该请求。
+
+NotConfigured
+-------------
+
+.. exception:: NotConfigured
+
+某些组件可能会引发此异常，以指示它们将保持禁用状态。这些组件包括:
+
+ * Extensions
+ * Item pipelines
+ * Downloader middlewares
+ * Spider middlewares
+
+必须在组件的 ``__init__`` 方法中引发异常。
+
+NotSupported
+------------
+
+.. exception:: NotSupported
+
+引发此异常表示不支持的功能。

@@ -1,0 +1,16 @@
+.. _intro-examples:
+
+========
+示例
+========
+
+最好的学习方式是使用示例，Scrapy 也不例外。因此，有一个名为 quotesbot_, 的 Scrapy 项目示例，您可以使用它来玩和学习更多关于 Scrapy。它包含两个用于
+http://quotes.toscrape.com 的爬虫，一个使用 CSS 选择器，另一个使用 XPath 表达式。
+
+有关 quotesbot_  项目，请访问: https://github.com/scrapy/quotesbot.
+您可以在项目的 README 中找到有关它的更多信息。
+
+如果您熟悉 git，您可以导出代码。否则，您可以通过点击
+`此处 <https://github.com/scrapy/quotesbot/archive/master.zip>`_ 将项目下载为zip文件 。
+
+.. _quotesbot: https://github.com/scrapy/quotesbot
